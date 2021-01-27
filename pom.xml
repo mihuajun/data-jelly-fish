@@ -21,20 +21,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-starter-client</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -65,11 +53,6 @@
             <artifactId>rocket-api-boot-starter</artifactId>
             <version>2.3.3.RELEASE</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.aliyun.openservices</groupId>-->
-<!--            <artifactId>aliyun-cms</artifactId>-->
-<!--            <version>0.2.4</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -116,42 +99,6 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>0.4.13</version>
-                <configuration>
-                    <imageName>${docker.image.prefix}/${PROJECT_GROUP}/${project.artifactId}</imageName>
-                    <baseImage>${docker.image.prefix}/jre8 </baseImage>
-                    <workdir>/app</workdir>
-                    <resources>
-                        <resource>
-                            <targetPath>/app</targetPath>
-                            <directory>docker</directory>
-                            <include>start.sh</include>
-                        </resource>
-                        <resource>
-                            <targetPath>/app</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                    </resources>
-                    <forceTags>true</forceTags>
-                    <imageTags>
-                        <imageTag>${project.version}</imageTag>
-                        <imageTag>latest</imageTag>
-                    </imageTags>
-                    <useConfigFile>false</useConfigFile>
-                    <exposes>
-                        <expose>8080</expose>
-                        <expose>8090</expose>
-                    </exposes>
-                    <runs>
-                        <run>chmod +x /app/start.sh</run>
-                    </runs>
-                    <cmd>/app/start.sh ${project.build.finalName}.jar</cmd>
                 </configuration>
             </plugin>
         </plugins>
