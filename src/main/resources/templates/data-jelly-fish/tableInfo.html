@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../data-jelly-fish/css/layui.css">
+</head>
+<body  style="margin:20px;">
+<div class="layui-fluid">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend style="font-size: 16px">表空间 [ <a id="tableName">None</a> ] 总览</legend>
+    </fieldset>
+    <div class="layui-row">
+        <div class="layui-col-sm2">
+            <div class="grid-demo grid-demo-bg1">空间占用：<a id="storageSize">0 KB</a></div>
+        </div>
+        <div class="layui-col-sm2">
+            <div class="grid-demo grid-demo-bg1">总记录数：<a id="recordSize">0</a></div>
+        </div>
+        <div class="layui-col-sm2">
+            <div class="grid-demo grid-demo-bg1">成功数量：<a id="successfulSize">0</a></div>
+        </div>
+        <div class="layui-col-sm2">
+            <div class="grid-demo">失败数量: <a id="failedSize">0</a></div>
+        </div>
+        <div class="layui-col-sm2">
+            <div class="grid-demo">待处理数量: <a id="waitSize">0</a></div>
+        </div>
+    </div>
+</div>
+
+<div class="layui-fluid">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend style="font-size: 16px">筛选</legend>
+    </fieldset>
+    <form class="layui-form" action="" lay-filter="example">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">开始时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="startTime" id="startTime" lay-verify="datetime" placeholder="yyyy-MM-dd HH:mm:ss" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <label class="layui-form-label">截止时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="endTime" id="endTime"  lay-verify="date" placeholder="yyyy-MM-dd HH:mm:ss" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <label class="layui-form-label">重试次数</label>
+                <div class="layui-input-block">
+                    <input type="text" name="times" lay-verify="title" autocomplete="off" value="" placeholder="重试次数" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <label class="layui-form-label">是否已同步</label>
+                <div class="layui-input-inline">
+                    <select name="isSync" lay-verify="required" lay-search="">
+                        <option value="">全部</option>
+                        <option value="0">未同步</option>
+                        <option value="1">已同步</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">自定义筛选</label>
+            <div class="layui-input-block">
+                <input type="text" name="customSearch" lay-verify="title" autocomplete="off" value="{}" placeholder="自定义筛选 mongo语法" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item" style="text-align: right">
+            <button type="button" class="layui-btn layui-btn-normal" onclick="batchRePush()">批量重置</button>
+            <button type="button" class="layui-btn layui-btn-normal" onclick="batchDelete()">批量删除</button>
+            <button type="button" class="layui-btn layui-btn-normal" onclick="searchForm()">搜索</button>
+        </div>
+    </form>
+</div>
+
+    <table class="layui-hide" id="test" lay-filter="test"></table>
+</div>
+<script src="../data-jelly-fish/layui.js"></script>
+<script>
+
+    var tableName = getUrlParam().table;
+    var $;
+    var table;
+    var form;
+
+    function getUrlParam() {
+        let query = window.location.search.substring(1);
+        let vars = query.split("&");
+        let urlParam = {};
+        for (let i=0;i<vars.length;i++) {
+            let pair = vars[i].split("=");
+            urlParam[pair[0]] = pair[1];
+        }
+        return urlParam;
+    }
+
+    var baseCols = [
+        {field:'id',  title: 'ID (_id)'}
+        ,{field:'content',  title: '内容 (content)'}
+        ,{field:'times',  title: '重试的次数 (times)'}
+        ,{field:'nextTime',  title: '下一次重试的时间 (nextTime)'}
+        ,{field:'lastResult',  title: '最后一次推送的结果 (lastResult)'}
+        ,{field:'status', align:'center',width:100, title: '是否已同步 (status)',templet:'#topStatus'}
+        ,{field:'createTime',  title: '创建时间 (createTime)'}
+        ,{field:'updateTime',  title: '更新时间 (updateTime)'}
+    ];
+
+    //JavaScript代码区域
+    layui.use(['form', 'layedit', 'laydate','table','util'], function(){
+
+        $ = layui.jquery, layer = layui.layer,util = layui.util; //独立版的layer无需执行这一句
+
+        var laydate = layui.laydate;
+        form = layui.form;
+        //日期
+        laydate.render({
+            elem: '#startTime',
+            type: "datetime"
+        });
+        laydate.render({
+            elem: '#endTime',
+            type: "datetime"
+        });
+
+        $("#tableName").text(tableName);
+        $.getJSON("../table/"+tableName+"/stats",function (data) {
+            if (!data.data){
+                return;
+            }
+            data = data.data;
+            $("#storageSize").text(data.storageSize);
+            $("#recordSize").text(data.recordSize);
+            $("#successfulSize").text(data.successfulSize);
+            $("#failedSize").text(data.failedSize);
+            $("#waitSize").text(data.waitSize);
+
+        })
+
+        table = layui.table;
+
+
+        function addCols(field){
+            for (cItem in baseCols){
+                if(cItem.field == field){
+                    return;
+                }
+            }
+            baseCols.push({"field":field,  title: field,hide:true})
+        }
+
+
+
+        //表头信息获取
+        $.getJSON("../table/"+tableName+"/cols",function (data) {
+            if (!data.data){
+                return;
+            }
+            var item = data.data;
+
+            if(item.content && item.content.constructor === Object){
+                $.each(item.content,function (key,value) {
+                    var field = "content."+key;
+                    baseCols.push( {field:field,  title: field,"hide":true})
+                })
+            }
+            if(item.lastResult && item.lastResult.constructor === Object){
+                $.each(item.lastResult,function (key,value) {
+                    var field = "lastResult."+key;
+                    baseCols.push( {field:field,  title: field,"hide":true})
+                })
+            }
+            initTableInfo();
+        })
+
+        // 原样显示xml或者html信息
+        function apiFormat(d){
+            return util.escape(d.api);
+        }
+
+        function initTableInfo() {
+            table.render({
+                elem: '#test'
+                ,toolbar: true
+                ,defaultToolbar: ['filter', 'exports', 'print']
+                ,cellMinWidth: 80
+                ,url:'../table/'+tableName
+                ,method: "POST"
+                ,contentType: 'application/json'
+                ,where:form.val('example')
+                ,parseData: function (res) {
+                    if(res.code != "0"){
+                        return;
+                    }
+                    if (res.data.data){
+                        $.each(res.data.data,function (index,item) {
+                            if(item.content && item.content.constructor === Object){
+                                $.each(item.content,function (key,value) {
+                                    item["content."+key] = value;
+                                })
+
+                                item.content = JSON.stringify(item.content);
+                            }
+                            if(item.lastResult && item.lastResult.constructor === Object){
+                                $.each(item.lastResult,function (key,value) {
+                                    item["lastResult."+key] = value;
+                                })
+
+                                item.lastResult = JSON.stringify(item.lastResult);
+                            }else{
+                                item.lastResult = util.escape(item.lastResult)
+                            }
+
+                        })
+
+                    }
+
+                    return {
+                        "code":res.code,
+                        "msg":res.msg,
+                        "count":res.data.totalRecords,
+                        "data":res.data.data
+                    }
+                }
+                ,cols: [baseCols]
+                ,page: true,
+                request: {
+                    pageName: 'pageNo', // page
+                    limitName: 'pageSize' // limit
+                }
+            });
+        }
+
+    //触发事件
+        var active = {
+            setTop: function(){
+                var that = this;
+                //多窗口模式，层叠置顶
+                var index = layer.open({
+                    type: 2 //此处以iframe举例
+                    ,title: 'CONSUMER-EDIT'
+                    ,area: ['1000px', '450px']
+                    ,shade: 0
+                    ,maxmin: true
+                    ,content: '../view/consumerEdit'
+                    ,zIndex: layer.zIndex //重点1
+                    ,success: function(layero){
+                        layer.setTop(layero); //重点2
+                    }
+                });
+
+                layer.full(index);
+            }
+        };
+
+
+        $('#layerDemo .layui-btn').on('click', function(){
+            var othis = $(this), method = othis.data('method');
+            active[method] ? active[method].call(this, othis) : '';
+        });
+
+        table.on('tool(test)', function (obj) {
+            if(obj.event === "del"){
+                deleteConsumer(table,obj)
+            }else if(obj.event === "edit"){
+                editConsumer(table,obj);
+            }
+        });
+    });
+
+
+    /* -----------function------------ */
+    function deleteConsumer(table,obj) {
+        layer.confirm('确认要删除吗？', {
+            btn : [ '确定', '取消' ]//按钮
+        }, function(index) {
+            $.ajax({
+                type: 'DELETE',
+                url: '../consumer',
+                data: {id:obj.data.id},
+                success: function(data){
+                    if (data.code == "0"){
+                        layer.msg("删除成功",{time: 500},function(){
+                            table.reload('test');
+                        });
+                    }
+                }
+            });
+
+            layer.close(index);
+        });
+    }
+
+    function editConsumer(table,obj) {
+        var index = layer.open({
+            type: 2 //此处以iframe举例
+            ,title: 'CONSUMER-EDIT'
+            ,area: ['1000px', '450px']
+            ,shade: 0
+            ,maxmin: true
+            ,content: '../view/consumerEdit?id='+obj.data.id
+            ,zIndex: layer.zIndex //重点1
+            ,success: function(layero){
+                layer.setTop(layero); //重点2
+            }
+        });
+
+        layer.full(index);
+    }
+
+    function searchForm() {
+        table.reload('test',{
+            "where":form.val('example'),
+            page: {
+                curr: 1 //重新从第 1 页开始
+            }
+        });
+    }
+
+    function batchDelete() {
+        layer.confirm('确认要删除吗？ 点击`确认`将根据搜索条件删除数据，并且无法恢复！', {
+            btn : [ '确定', '取消' ]//按钮
+        }, function(index) {
+            $.ajax({
+                type: 'POST',
+                url: '../table/'+tableName+"/delete",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(form.val('example')),
+                dataType: "json",
+                success: function(data){
+                    if (data.code == "0"){
+                        layer.msg("删除成功",{time: 500},function(){
+                            table.reload('test');
+                        });
+                    }
+                }
+            });
+
+            layer.close(index);
+        });
+    }
+
+    function batchRePush() {
+        layer.confirm('确认要重置吗？ 点击`确认`将根据搜索条件批量将数据归于初始状态', {
+            btn : [ '确定', '取消' ]//按钮
+        }, function(index) {
+            $.ajax({
+                type: 'PUT',
+                url: '../table/'+tableName,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(form.val('example')),
+                dataType: "json",
+                success: function(data){
+                    if (data.code == "0"){
+                        layer.msg("重置成功",{time: 500},function(){
+                            table.reload('test');
+                        });
+                    }
+                }
+            });
+
+            layer.close(index);
+        });
+    }
+</script>
+
+<script type="text/html" id="topStatus">
+    {{# if (d.isSync==0) { }}
+    <span class="layui-badge ">未同步</span>
+    {{# } else { }}
+    <span class="layui-badge layui-bg-gray">已同步</span>
+    {{# } }}
+</script>
+
+<style type="text/css">
+
+</style>
+</body>
+</html>

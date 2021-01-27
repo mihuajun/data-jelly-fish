@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../data-jelly-fish/css/layui.css">
+</head>
+<body class="layui-layout-body" style="margin:20px;">
+<div class="site-demo-button" id="layerDemo" style="margin-bottom: 0;">
+    <button data-method="setTop" class="layui-btn">添加</button>
+    <button data-method="taskReload" class="layui-btn">任务刷新</button>
+</div>
+    <table class="layui-hide" id="test" lay-filter="test"></table>
+</div>
+<script src="../data-jelly-fish/layui.js"></script>
+<script>
+
+    var $;
+    //JavaScript代码区域
+    layui.use('table', function(){
+
+        $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+
+        var table = layui.table;
+
+        table.render({
+            elem: '#test'
+            ,cellMinWidth: 80
+            ,url:'../topic/list'
+            ,parseData: function (res) {
+                return {
+                    "code":res.code,
+                    "msg":res.msg,
+                    "count":res.data.totalRecords,
+                    "data":res.data.data
+                }
+            }
+            ,cols: [
+                [
+                {field:'id',  title: 'ID'}
+                ,{field:'name',  title: '描述'}
+                ,{field:'url', width:500, title: '来源地址'}
+                ,{field:'delay', align:'center',width:100, title: '频次(秒)'}
+                ,{field:'status', align:'center',width:80, title: '状态',templet:'#topStatus'}
+                ,{fixed: 'right', align:'center', toolbar: '#barDemo',  title: '操作'}
+                ]
+            ]
+            ,page: true,
+            request: {
+                pageName: 'pageNo', // page
+                limitName: 'pageSize' // limit
+            }
+        });
+
+
+        //触发事件
+        var active = {
+            taskReload: function(){
+                $.getJSON("../api/task-reload",function (data) {
+                    if (data.code == "0"){
+                        layer.msg("刷新成功",{time: 500},function(){
+                        });
+                    }
+                })
+            },
+            setTop: function(){
+                var that = this;
+                //多窗口模式，层叠置顶
+                var index = layer.open({
+                    type: 2 //此处以iframe举例
+                    ,title: 'TOPIC-EDIT'
+                    ,area: ['1000px', '450px']
+                    ,shade: 0
+                    ,maxmin: true
+                    ,content: '../view/topicEdit'
+                    /*,btn: ['保存', '关闭'] //只是为了演示*/
+                    ,yes: function(){
+                        $(that).click();
+                    }
+                    ,btn2: function(){
+                        layer.closeAll();
+                    }
+
+                    ,zIndex: layer.zIndex //重点1
+                    ,success: function(layero){
+                        layer.setTop(layero); //重点2
+                    }
+                });
+
+                layer.full(index);
+            }
+        };
+
+
+        $('#layerDemo .layui-btn').on('click', function(){
+            var othis = $(this), method = othis.data('method');
+            active[method] ? active[method].call(this, othis) : '';
+        });
+
+        table.on('tool(test)', function (obj) {
+            if(obj.event === "del"){
+                deleteTopic(table,obj)
+            }else if(obj.event === "edit"){
+                editTopic(table,obj);
+            }else if(obj.event === "detail"){
+                showConsumerList(table,obj)
+            }
+        });
+
+    });
+
+
+    /* ---------function------------*/
+    function showConsumerList(table,obj) {
+        var index = layer.open({
+            type: 2 //此处以iframe举例
+            ,title: '消费者管理'
+            ,area: ['1000px', '450px']
+            ,shade: 0
+            ,maxmin: true
+            ,content: '../view/consumer?topicId='+obj.data.id
+            ,zIndex: layer.zIndex //重点1
+            ,success: function(layero){
+                layer.setTop(layero); //重点2
+            }
+        });
+
+        layer.full(index);
+    }
+
+    function deleteTopic(table,obj) {
+
+        layer.confirm('确认要删除吗？', {
+            btn : [ '确定', '取消' ]//按钮
+        }, function(index) {
+            $.ajax({
+                type: 'DELETE',
+                url: '../topic',
+                data: {id:obj.data.id},
+                success: function(data){
+                    if (data.code == "0"){
+                        layer.msg("删除成功",{time: 500},function(){
+                            table.reload('test');
+                        });
+                    }
+                }
+            });
+
+            layer.close(index);
+        });
+    }
+
+    function editTopic(table,obj) {
+        var index = layer.open({
+            type: 2 //此处以iframe举例
+            ,title: 'TOPIC-EDIT'
+            ,area: ['1000px', '450px']
+            ,shade: 0
+            ,maxmin: true
+            ,content: '../view/topicEdit?id='+obj.data.id
+            ,zIndex: layer.zIndex //重点1
+            ,success: function(layero){
+                layer.setTop(layero); //重点2
+            }
+        });
+
+        layer.full(index);
+    }
+
+
+    function showAddCustomer(topicId) {
+        var that = this;
+        //多窗口模式，层叠置顶
+        var index = layer.open({
+            type: 2 //此处以iframe举例
+            ,title: 'CONSUMER-EDIT'
+            ,area: ['1000px', '450px']
+            ,shade: 0
+            ,maxmin: true
+            ,content: '../view/consumerEdit?topicId='+topicId
+            ,zIndex: layer.zIndex //重点1
+            ,success: function(layero){
+                layer.setTop(layero); //重点2
+            }
+        });
+
+        layer.full(index);
+    }
+</script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="detail">消费者管理</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="topStatus">
+    {{# if (d.status==0) { }}
+    <span class="layui-badge layui-bg-gray">禁用</span>
+    {{# } else { }}
+    <span class="layui-badge ">启用</span>
+    {{# } }}
+</script>
+</body>
+</html>

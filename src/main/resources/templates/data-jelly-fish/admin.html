@@ -1,0 +1,123 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Data Jelly Fish - 数据调度中心</title>
+    <link rel="stylesheet" href="../data-jelly-fish/css/layui.css">
+    <link rel="icon" href="../data-jelly-fish/images/icon.jpg" type="image/x-icon" />
+    <link rel="shortcut icon" href="../data-jelly-fish/images/icon.jpg" type="image/x-icon"/>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <img class="iconImg" width="46px" src="../data-jelly-fish/images/icon.jpg">
+        <div class="layui-logo">Data Jelly Fish</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-right"  id="nav" layui-filter="test" >
+<!--            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                    Admin
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="">安全设置</a></dd>
+                </dl>
+            </li>-->
+            <li class="layui-nav-item"><a href="https://alenfive.gitbook.io/data-jellyfish/ye-wu-dui-jie" target="_blank">开发文档</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black" >
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+
+                <li class="layui-nav-item layui-this" ><a href="javascript:;" page="../view/index">实时面板</a></li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;">配置</a>
+                    <dl class="layui-nav-child">
+                        <dd class=""><a href="javascript:;" page="../view/topic">TOPIC管理</a></dd>
+                        <dd><a href="javascript:;" page="../view/consumer">消费者管理</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;">数据空间</a>
+                    <dl class="layui-nav-child" id="table-list">
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <iframe id="iframeMain" src="../view/index" style="width: 100%;border:0px;height: calc(100% - 10px)" ></iframe>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © alenfive.github.com
+    </div>
+</div>
+<script src="../data-jelly-fish/layui.js"></script>
+<script>
+    //JavaScript代码区域
+
+    var $;
+    layui.use('element', function(){
+
+        $ = layui.jquery;
+        var element = layui.element
+
+
+        $.getJSON("../consumer/table-list",function (data) {
+            if (!data.data){
+                $("#table-list").append('<dd><a href="javascript:;" >暂无</a></dd>');
+                initEvent();
+                return;
+            }
+            $.each(data.data,function (index,item) {
+                $("#table-list").append('<dd><a href="javascript:;" page="../view/tableInfo?table='+item.table+'">'+item.table+'</a></dd>')
+            })
+
+            element.render('nav', "test");
+
+
+            initEvent();
+        })
+
+
+    });
+
+    function initEvent() {
+        $(".layui-nav-item").click(function (e) {
+            if ($(this).children(".layui-nav-child").length >0){
+                $($(this).children(".layui-nav-child").children("dd")[0]).click();
+            }else{
+                $("#iframeMain").attr("src",$(this).children("a").attr("page"));
+            }
+        })
+        $("dd>a").click(function (e) {
+            $("#iframeMain").attr("src",$(this).attr("page"));
+            return false;
+        });
+    }
+
+</script>
+
+<style type="text/css">
+.layui-logo{
+    margin-left: 35px;
+}
+.iconImg{
+    margin-left: 20px;
+    margin-top: 6px;
+    border-radius:25px;
+}
+</style>
+</body>
+</html>

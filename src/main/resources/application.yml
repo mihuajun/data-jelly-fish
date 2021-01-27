@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: data-jelly-fish
+  jackson:
+    default-property-inclusion: non_null
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  mvc:
+    date-format: yyyy-MM-dd HH:mm:ss
+  data:
+    mongodb:
+      host: 127.0.0.1
+      database: data-jelly-fish
+      username: root
+      password: root
+      port: 27017
+      authentication-database: admin
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: root
+    database: 2
+  thymeleaf:
+    cache: false
+    check-template: true
+    check-template-location: true
+    enabled: true
+    encoding: utf-8
+    mode: HTML5
+    prefix: classpath:/templates/
+    suffix: .html
+
+  security:
+    user:
+      password: admin
+      name: admin

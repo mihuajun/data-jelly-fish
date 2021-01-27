@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../data-jelly-fish/css/layui.css">
+</head>
+<body class="layui-layout-body" style="margin:20px;">
+    <div class="site-demo-button" id="layerDemo" style="margin-bottom: 0;">
+        <div class="layui-fluid">
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend style="font-size: 16px">筛选</legend>
+            </fieldset>
+            <form class="layui-form" action="" lay-filter="example">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">TOPIC选择</label>
+                    <div class="layui-input-inline">
+                        <select name="topicId" lay-verify="required" lay-search="">
+                            <option value="">直接选择或搜索选择</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="layui-form-item" style="text-align: right">
+            <button type="button" data-method="setTop" class="layui-btn " >添加</button>
+            <button type="button" class="layui-btn layui-btn-normal" onclick="searchForm()">搜索</button>
+        </div>
+    </div>
+</div>
+    <table class="layui-hide" id="test" lay-filter="test"></table>
+</div>
+<script src="../data-jelly-fish/layui.js"></script>
+<script>
+
+
+    var $;
+    var table;
+    var form;
+    //JavaScript代码区域
+    layui.use(['table','form'], function(){
+
+        $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+        form = layui.form;
+        table = layui.table;
+        init()
+        table.render({
+            elem: '#test'
+            ,cellMinWidth: 80
+            ,url:'../consumer/list'
+            ,where: {topicId: getUrlParam().topicId}
+            ,parseData: function (res) {
+                return {
+                    "code":res.code,
+                    "msg":res.msg,
+                    "count":res.data.totalRecords,
+                    "data":res.data.data
+                }
+            }
+            ,cols: [
+                [
+                {field:'id',  title: 'ID'}
+                ,{field:'topicId',  title: '所属topic'}
+                ,{field:'name',  title: '描述'}
+                ,{field:'table',  title: '表空间'}
+                ,{field:'url',  title: '推送地址'}
+                ,{field:'delay',  title: '重试延迟(秒)'}
+                ,{field:'maxTimes',  title: '最大重试次数'}
+                ,{field:'isFirstDelay',  title: '首次延迟'}
+                ,{field:'isExponent',  title: '指数级重试'}
+                ,{field:'createTime', width:200, title: '创建时间'}
+                ,{field:'status', align:'center',width:80, title: '状态',templet:'#topStatus'}
+                ,{fixed: 'right', width:200, align:'center', toolbar: '#barDemo',  title: '操作'}
+                ]
+            ]
+            ,page: true,
+            request: {
+                pageName: 'pageNo', // page
+                limitName: 'pageSize' // limit
+            }
+        });
+
+
+        //触发事件
+        var active = {
+            setTop: function(){
+                var that = this;
+                //多窗口模式，层叠置顶
+                var index = layer.open({
+                    type: 2 //此处以iframe举例
+                    ,title: 'CONSUMER-EDIT'
+                    ,area: ['1000px', '450px']
+                    ,shade: 0
+                    ,maxmin: true
+                    ,content: '../view/consumerEdit?topicId='+getUrlParam().topicId
+                    ,zIndex: layer.zIndex //重点1
+                    ,success: function(layero){
+                        layer.setTop(layero); //重点2
+                    }
+                });
+
+                layer.full(index);
+            }
+        };
+
+
+        $('#layerDemo .layui-btn').on('click', function(){
+            var othis = $(this), method = othis.data('method');
+            active[method] ? active[method].call(this, othis) : '';
+        });
+
+        table.on('tool(test)', function (obj) {
+            if(obj.event === "del"){
+                deleteConsumer(table,obj)
+            }else if(obj.event === "edit"){
+                editConsumer(table,obj);
+            }else if(obj.event === "detail"){
+                linkTableInfo(table,obj);
+            }
+        });
+    });
+
+
+    function init(){
+        var topicId = getUrlParam().topicId;
+        $.get("../topic/select",function (data) {
+            if(!data.data){
+                return;
+            }
+
+            $.each(data.data,function (index,item) {
+                $("[name='topicId']").append('<option value="'+item.id+'">'+item.name+'</option>')
+            })
+
+            if (topicId){
+                $("[name='topicId']").find("option[value="+topicId+"]").prop("selected",true);
+            }
+
+            layui.form.render('select');
+        })
+
+
+    }
+
+    /* -----------function------------ */
+
+    function getUrlParam() {
+        let query = window.location.search.substring(1);
+        let vars = query.split("&");
+        let urlParam = {};
+        for (let i=0;i<vars.length;i++) {
+            let pair = vars[i].split("=");
+            urlParam[pair[0]] = pair[1];
+        }
+        return urlParam;
+    }
+
+    function deleteConsumer(table,obj) {
+        layer.confirm('确认要删除吗？', {
+            btn : [ '确定', '取消' ]//按钮
+        }, function(index) {
+            $.ajax({
+                type: 'DELETE',
+                url: '../consumer',
+                data: {id:obj.data.id},
+                success: function(data){
+                    if (data.code == "0"){
+                        layer.msg("删除成功",{time: 500},function(){
+                            table.reload('test');
+                        });
+                    }
+                }
+            });
+
+            layer.close(index);
+        });
+    }
+
+    function editConsumer(table,obj) {
+        var index = layer.open({
+            type: 2 //此处以iframe举例
+            ,title: 'CONSUMER-EDIT'
+            ,area: ['1000px', '450px']
+            ,shade: 0
+            ,maxmin: true
+            ,content: '../view/consumerEdit?id='+obj.data.id
+            ,zIndex: layer.zIndex //重点1
+            ,success: function(layero){
+                layer.setTop(layero); //重点2
+            }
+        });
+
+        layer.full(index);
+    }
+
+    function linkTableInfo(table,obj) {
+        if (parent.$("#iframeMain")[0]){
+            parent.$("#iframeMain").attr("src","../view/tableInfo?table="+obj.data.table)
+        }else{
+            parent.parent.$("#iframeMain").attr("src","../view/tableInfo?table="+obj.data.table)
+        }
+    }
+
+    function searchForm() {
+        table.reload('test',{
+            "where":form.val('example'),
+            page: {
+                curr: 1 //重新从第 1 页开始
+            }
+        });
+    }
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="detail">数据查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script type="text/html" id="topStatus">
+    {{# if (d.status==0) { }}
+    <span class="layui-badge layui-bg-gray">禁用</span>
+    {{# } else { }}
+    <span class="layui-badge ">启用</span>
+    {{# } }}
+</script>
+</body>
+</html>
