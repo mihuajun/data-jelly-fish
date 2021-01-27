@@ -21,5 +21,6 @@ public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
         super.configure(http);
         http.headers().frameOptions().sameOrigin();
         http.csrf().disable();
+        http.authorizeRequests().antMatchers("/test/**").permitAll();
     }
 }
