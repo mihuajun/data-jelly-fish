@@ -1,0 +1,437 @@
+
+{
+  "_id" : ObjectId("5f89a05bf8b91c18a0c51c74"),
+  "method" : "GET",
+  "path" : "/business/health",
+  "type" : "Code",
+  "service" : "rocket-ssc",
+  "group_name" : "businessHealth",
+  "editor" : "admin",
+  "name" : "",
+  "datasource" : "",
+  "script" : "",
+  "options" : "",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "businessHealth"
+}
+
+{
+  "_id" : ObjectId("5fe169e7602e8770d4596fb5"),
+  "method" : "GET",
+  "path" : "/view/admin",
+  "type" : "Code",
+  "service" : "rocket-ssc",
+  "group_name" : "ViewAdminController",
+  "editor" : "admin",
+  "name" : "",
+  "datasource" : "",
+  "script" : "",
+  "options" : "",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "ViewAdminController"
+}
+
+
+{
+  "_id" : ObjectId("5fe19202602e8718f45aa1b5"),
+  "method" : "GET",
+  "path" : "/view/{page}",
+  "type" : "Code",
+  "service" : "rocket-ssc",
+  "group_name" : "ViewAdminController",
+  "editor" : "admin",
+  "name" : "",
+  "datasource" : "",
+  "script" : "",
+  "options" : "",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "ViewAdminController"
+}
+
+
+{
+  "_id" : ObjectId("5fe2b3e4602e874bbc98e56a"),
+  "method" : "POST",
+  "path" : "/consumer",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "consumer  保存",
+  "datasource" : "mongodb",
+  "script" : "import org.bson.types.ObjectId\r\nid = Utils.val(\"id\");\r\nbodyRoot.remove(\"id\")\r\n\r\nbodyRoot.updateTime = new Date()\r\nbodyRoot.topicId = new ObjectId(bodyRoot.topicId)\r\nbodyRoot.maxTimes = new Integer(bodyRoot.maxTimes);\r\n\r\nif(!id){\r\n    \r\n    bodyRoot.createTime = new Date()\r\n    doc = [\r\n        \"insert\":\"consumer\",\r\n        \"documents\":[bodyRoot]\r\n    ]\r\n    return mongodb.insert(doc);\r\n}\r\n\r\nbodyRoot._id = new ObjectId(id)\r\n\r\nimport java.text.SimpleDateFormat\r\nSimpleDateFormat sdf = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");\r\nif(!bodyRoot.createTime){\r\n    bodyRoot.createTime = new Date();\r\n}else{\r\n    bodyRoot.createTime = sdf.parse(bodyRoot.createTime)\r\n}\r\n\r\n\r\ndoc = [\r\n    \"update\":\"consumer\",\r\n    \"updates\":[\r\n        [\r\n            \"q\":[\"_id\":bodyRoot._id],\r\n            \"u\":bodyRoot\r\n        ]\r\n    ]\r\n]\r\n\r\nmongodb.update(doc)",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "TOPIC管理"
+}
+
+
+{
+  "_id" : ObjectId("5fe1cf9a602e872ea4828a15"),
+  "method" : "GET",
+  "path" : "/consumer/list",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "consumer 分页查询",
+  "datasource" : "mongodb",
+  "script" : "sql = \"\"\"\r\n{\r\n    \"find\":\"consumer\",\r\n    \"filter\":{\r\n        ?{topicId,\"topicId\":ObjectId(#{topicId})}\r\n    }\r\n}\r\n\"\"\"\r\nreturn db.pager(sql);",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "TOPIC管理"
+}
+
+
+{
+  "_id" : ObjectId("5fe2a2a5602e874bbc98e565"),
+  "method" : "DELETE",
+  "path" : "/consumer",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "consumer 删除",
+  "datasource" : "mongodb",
+  "script" : "import org.bson.types.ObjectId\r\nid = Utils.val(\"id\");\r\n\r\n\r\ndoc = [\r\n    \"delete\":\"consumer\",\r\n    \"deletes\":[\r\n        [\r\n            \"q\":[\"_id\":new ObjectId(id)],\r\n            \"limit\":1\r\n        ]\r\n        \r\n    ]\r\n    \r\n]\r\n\r\nmongodb.remove(doc)",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "TOPIC管理"
+}
+
+
+{
+  "_id" : ObjectId("5fe2bb92602e877a4c6485cb"),
+  "method" : "GET",
+  "path" : "/consumer/{id}",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "consumer 单个查询",
+  "datasource" : "mongodb",
+  "script" : "sql = \"\"\"\r\n{\r\n    \"find\":\"consumer\",\r\n    \"filter\":{\r\n        \"_id\":ObjectId(#{id})\r\n    }\r\n}\r\n\"\"\"\r\nreturn db.findOne(sql);",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "TOPIC管理"
+}
+
+
+{
+  "_id" : ObjectId("5fe1f16f602e875044e8c15e"),
+  "method" : "GET",
+  "path" : "/topic/select",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "topic 下拉选择框获取",
+  "datasource" : "mongodb",
+  "script" : "sql = \"\"\"\r\n{\r\n    \"find\":\"topic\",\r\n    \"projection\":{_id:1,name:1}\r\n    \"filter\":{\r\n    }\r\n}\r\n\"\"\"\r\nreturn db.find(sql);",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "TOPIC管理"
+}
+
+
+{
+  "_id" : ObjectId("5fe19cf8602e87719c95540d"),
+  "method" : "GET",
+  "path" : "/topic/list",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "topic 分页查询",
+  "datasource" : "mongodb",
+  "script" : "sql = \"\"\"\r\n{\r\n    \"find\":\"topic\",\r\n    \"filter\":{\r\n        \r\n    }\r\n}\r\n\"\"\"\r\nreturn db.pager(sql);",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "TOPIC管理"
+}
+
+
+{
+  "_id" : ObjectId("5fe35d5b602e8770606be113"),
+  "method" : "GET",
+  "path" : "/topic/{id}",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "topic 单个查询",
+  "datasource" : "mongodb",
+  "script" : "sql = \"\"\"\r\n{\r\n    \"find\":\"topic\",\r\n    \"filter\":{\r\n        \"_id\":ObjectId(#{id})\r\n    }\r\n}\r\n\"\"\"\r\nreturn db.findOne(sql);",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "TOPIC管理"
+}
+
+
+{
+  "_id" : ObjectId("5fe1f260602e875044e8c162"),
+  "method" : "PUT",
+  "path" : "/topic/status",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "topic 状态修改",
+  "datasource" : "mongodb",
+  "script" : "sql = \"\"\"\r\n{\r\n    \"update\":\"topic\",\r\n    \"updates\":[\r\n        {\r\n            \"q\":{_id:ObjectId(#{id})},\r\n            \"u\":{\\$set:{\"status\":#{status}}}\r\n            \r\n        }\r\n    ]\r\n}\r\n\"\"\"\r\nreturn db.update(sql);",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "TOPIC管理"
+}
+
+
+{
+  "_id" : ObjectId("5fe202de602e874bbc98e54e"),
+  "method" : "POST",
+  "path" : "/topic",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "topic保存",
+  "datasource" : "mongodb",
+  "script" : "import org.bson.types.ObjectId\r\nid = Utils.val(\"id\");\r\nlog.info(bodyRoot)\r\nif(!id){\r\n    doc = [\r\n        \"insert\":\"topic\",\r\n        \"documents\":[bodyRoot]\r\n    ]\r\n    return mongodb.insert(doc);\r\n}\r\n\r\nbodyRoot._id = new ObjectId(id)\r\n\r\nbodyRoot.remove(\"id\")\r\n\r\ndoc = [\r\n    \"update\":\"topic\",\r\n    \"updates\":[\r\n        [\r\n            \"q\":[\"_id\":bodyRoot._id],\r\n            \"u\":bodyRoot\r\n        ]\r\n    ]\r\n]\r\n\r\nmongodb.update(doc)",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "TOPIC管理"
+}
+
+
+{
+  "_id" : ObjectId("5fe29d90602e874bbc98e560"),
+  "method" : "DELETE",
+  "path" : "/topic",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "topic删除",
+  "datasource" : "mongodb",
+  "script" : "import org.bson.types.ObjectId\r\nid = Utils.val(\"id\");\r\n\r\n\r\ndoc = [\r\n    \"delete\":\"topic\",\r\n    \"deletes\":[\r\n        [\r\n            \"q\":[\"_id\":new ObjectId(id)],\r\n            \"limit\":1\r\n        ]\r\n        \r\n    ]\r\n    \r\n]\r\n\r\nmongodb.remove(doc)",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "TOPIC管理"
+}
+
+{
+  "_id" : ObjectId("5f899530f8b91cbe08299be5"),
+  "method" : "GET",
+  "path" : "/api/task-reload",
+  "type" : "Code",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "任务刷新",
+  "datasource" : "",
+  "script" : "",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "TOPIC管理"
+}
+
+
+{
+  "_id" : ObjectId("5feaf0b544e01b00971845ac"),
+  "method" : "POST",
+  "path" : "/dkh/test",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "大客户",
+  "editor" : "mihuajun",
+  "name" : "大客户测试",
+  "datasource" : "mongodb",
+  "script" : "",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "大客户"
+}
+
+{
+  "_id" : ObjectId("5fec2f2d44e01b00971845af"),
+  "method" : "POST",
+  "path" : "/dkh/test2",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "大客户",
+  "editor" : "mihuajun",
+  "name" : "大客户测试2",
+  "datasource" : "mongodb",
+  "script" : "Assert.isTrue(false,\"我错了\")",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "大客户"
+}
+
+{
+  "_id" : ObjectId("5fe3f788602e876a200098e3"),
+  "method" : "GET",
+  "path" : "/stats",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "总概览",
+  "datasource" : "mongodb",
+  "script" : "import org.springframework.data.redis.core.StringRedisTemplate\r\nStringRedisTemplate redisTemplate = springContext.getBean(StringRedisTemplate.class);\r\nproducerPendingKey = \"rocket-ssc:producer:queue:pending\"\r\nconsumerPendingKey = \"rocket-ssc:consumer:queue:pending\"\r\nsql = \"\"\"\r\n{\r\n    \"find\":\"consumer\",\r\n    \"projection\":{\"_id\":1,\"table\":1,\"maxTimes\":1,\"shardings\":1},\r\n    \"filter\":{\r\n        \"status\":1\r\n    }\r\n}\r\n\"\"\"\r\ntableList = db.find(sql);\r\ntopicSql = \"\"\"\r\n{\r\n    \"find\":\"topic\",\r\n    \"projection\":{\"_id\":1,\"shardings\":1},\r\n    \"filter\":{\r\n        \"status\":1\r\n    }\r\n}\r\n\"\"\"\r\ntopicList = db.find(topicSql)\r\nsql = \"\"\"\r\n{collStats:#{table}}\r\n\"\"\"\r\n\r\nsyncCount = \"\"\"\r\n{\r\n  count: #{table},\r\n  query: {\r\n        \"isSync\":#{isSync}\r\n    }\r\n}\r\n\"\"\"\r\n\r\nfailedCount = \"\"\"\r\n{\r\n  count: #{table},\r\n  query: {\r\n        \"isSync\":#{isSync}\r\n        \"times\":{\"\\$gte\":#{maxTimes}}\r\n    }\r\n}\r\n\"\"\"\r\nwaitCount = \"\"\"\r\n{\r\n  count: #{table},\r\n  query: {\r\n        \"isSync\":#{isSync},\r\n        \"times\":{\"\\$lt\":#{maxTimes}}\r\n    }\r\n}\r\n\"\"\"\r\nstorageSize = 0;\r\nrecordSize = 0;\r\nsuccessfulSize = 0;\r\nfailedSize = 0;\r\nwaitSize = 0;\r\nconsumerTaskSize = 0;\r\nconsumerRuningTaskSize = redisTemplate.opsForZSet().size(consumerPendingKey);\r\ntopicTaskSize = 0;\r\ntopicRuningTaskSize = redisTemplate.opsForZSet().size(producerPendingKey);\r\nfor(item in tableList){\r\n    consumerTaskSize += item.shardings.size();\r\n    table = item.table;\r\n    stats = null;\r\n    try{\r\n        stats = db.find(sql);\r\n    }catch(e){continue;}\r\n    \r\n    storageSize += stats.storageSize;\r\n    recordSize += stats.count;\r\n    isSync = 1;\r\n    successfulSize += db.count(syncCount);\r\n    isSync = 0;\r\n    maxTimes = item.maxTimes;\r\n    failedSize += db.count(failedCount);\r\n    waitSize += db.count(waitCount);\r\n}\r\n\r\nfor(item in topicList){\r\n    topicTaskSize += item.shardings.size();\r\n}\r\n\r\nsuffix = \"\";\r\nif( (storageSize = storageSize/1024.0) <1024 ){\r\n    suffix = \" KB\";\r\n}else if( (storageSize = storageSize/1024.0) <1024 ){\r\n    suffix = \" MB\";\r\n}else if( (storageSize = storageSize/1024.0) <1024 ){\r\n    suffix = \" GB\";\r\n}else if( (storageSize = storageSize/1024.0) <1024 ){\r\n    suffix = \" TB\";\r\n}\r\n\r\nstorageSize = ((storageSize*100).toLong()/100)+suffix;\r\n\r\n\r\nresult = [\r\n    \"storageSize\":storageSize,\r\n    \"recordSize\":recordSize,\r\n    \"successfulSize\":successfulSize,\r\n    \"failedSize\":failedSize,\r\n    \"waitSize\":waitSize,\r\n    \"consumerTaskSize\":consumerTaskSize,\r\n    \"consumerRuningTaskSize\":consumerRuningTaskSize,\r\n    \"topicTaskSize\":topicTaskSize,\r\n    \"topicRuningTaskSize\":topicRuningTaskSize\r\n]\r\n\r\nreturn result;",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:58:30",
+  "groupName" : "TOPIC管理"
+}
+
+{
+  "_id" : ObjectId("5f9bc134f8b91c49f44207d4"),
+  "method" : "POST",
+  "path" : "/test/batchAccept",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "测试",
+  "editor" : "mihuajun",
+  "name" : "测试批量接收",
+  "datasource" : "mongodb",
+  "script" : "log.info(bodyRoot)",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "测试"
+}
+
+{
+  "_id" : ObjectId("5fec7554602e872870ed1c52"),
+  "method" : "POST",
+  "path" : "/user/verify",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "用户管理",
+  "editor" : "mihuajun",
+  "name" : "登录验证",
+  "datasource" : "mongodb",
+  "script" : "userList = [\r\n    \"admin\":\"123456\"\r\n]\r\n\r\nusername = Utils.val(\"username\");\r\nAssert.isNotEmpty(username,\"账号不能为空\")\r\npassword = Utils.val(\"password\");\r\n\r\nuserList[username] == password",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:24",
+  "update_time" : "2021-01-04 20:01:24",
+  "groupName" : "用户管理"
+}
+
+{
+  "_id" : ObjectId("5fed67de602e875294b20a79"),
+  "method" : "GET",
+  "path" : "/table/{table}/cols",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "表空间信息列查询",
+  "datasource" : "mongodb",
+  "script" : "\r\ndoc = [\r\n    \"find\":table,\r\n    \"sort\":[_id:-1],\r\n    \"limit\":1\r\n]\r\n\r\nmongodb.findOne(doc);\r\n\r\n",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:25",
+  "update_time" : "2021-01-04 20:01:25",
+  "groupName" : "TOPIC管理"
+}
+
+{
+  "_id" : ObjectId("5fe2c6ab602e877a4c6485d1"),
+  "method" : "POST",
+  "path" : "/table/{table}",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "表空间信息查询",
+  "datasource" : "mongodb",
+  "script" : "//log.info(bodyRoot)\r\n//{pageNo=1, pageSize=10, startTime=, endTime=, times=, isSync=, customSearch={}}\r\nimport java.text.SimpleDateFormat\r\nfilter = [:];\r\nif(bodyRoot.customSearch){\r\n    filter = Utils.pasreToObject(bodyRoot.customSearch);\r\n}\r\nif(bodyRoot.isSync){\r\n    filter.isSync = Integer.valueOf(bodyRoot.isSync);\r\n}\r\n\r\nif(bodyRoot.times){\r\n    filter.times = Integer.valueOf(bodyRoot.times);\r\n}\r\n\r\nSimpleDateFormat sdf = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");\r\ntimeFilter = null;\r\nif(bodyRoot.startTime && bodyRoot.endTime){\r\n    timeFilter = [\"\\$gte\":sdf.parse(bodyRoot.startTime),\"\\$lte\":sdf.parse(bodyRoot.endTime)]\r\n}else if(bodyRoot.startTime){\r\n    timeFilter = [\"\\$gte\":sdf.parse(bodyRoot.startTime)]\r\n}else if(bodyRoot.endTime){\r\n    timeFilter = [\"\\$lte\":sdf.parse(bodyRoot.endTime)]\r\n}\r\n\r\nif(timeFilter){\r\n    filter.createTime = timeFilter;\r\n}\r\n\r\ndoc = [\r\n    \"find\":table,\r\n    \"sort\":[_id:-1],\r\n    \"filter\":filter\r\n]\r\n\r\nreturn mongodb.pager(doc);",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:25",
+  "update_time" : "2021-01-04 20:01:25",
+  "groupName" : "TOPIC管理"
+}
+
+{
+  "_id" : ObjectId("5fe31c42602e8752b8582063"),
+  "method" : "GET",
+  "path" : "/table/{table}/stats",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "表空间信息统计",
+  "datasource" : "mongodb",
+  "script" : "sql = \"\"\"\r\n{collStats:#{table}}\r\n\"\"\"\r\nstats = db.findOne(sql);\r\n\r\nvalue = 0;\r\nsuffix = \"\";\r\nif( (value = stats.storageSize/1024.0) <1024 ){\r\n    suffix = \" KB\";\r\n}else if( (value = stats.storageSize/1024.0) <1024 ){\r\n    suffix = \" MB\";\r\n}else if( (value = stats.storageSize/1024.0) <1024 ){\r\n    suffix = \" GB\";\r\n}else if( (value = stats.storageSize/1024.0) <1024 ){\r\n    suffix = \" TB\";\r\n}\r\n\r\nstorageSize = ((value*100).toLong()/100)+suffix;\r\n\r\n\r\nresult = [\r\n    \"storageSize\":storageSize,\r\n    \"recordSize\":stats.count\r\n]\r\n\r\nsql = \"\"\"\r\n{\r\n  find: \"consumer\",\r\n  filter: {\r\n        \"table\":#{table}\r\n    }\r\n}\r\n\"\"\"\r\nconsumer = db.findOne(sql);\r\n\r\ncount = \"\"\"\r\n{\r\n  count: #{table},\r\n  query: {\r\n        \"isSync\":#{isSync}\r\n    }\r\n}\r\n\"\"\"\r\nisSync = 1;\r\nresult.successfulSize = db.findOne(count).count;\r\n\r\ncount = \"\"\"\r\n{\r\n  count: #{table},\r\n  query: {\r\n        \"isSync\":#{isSync}\r\n        \"times\":{\"\\$gte\":#{consumer.maxTimes}}\r\n    }\r\n}\r\n\"\"\"\r\n\r\nisSync = 0;\r\nresult.failedSize = db.findOne(count).count;\r\n\r\n\r\ncount = \"\"\"\r\n{\r\n  count: #{table},\r\n  query: {\r\n        \"isSync\":#{isSync},\r\n        \"times\":{\"\\$lt\":#{consumer.maxTimes}}\r\n    }\r\n}\r\n\"\"\"\r\n\r\nresult.waitSize = db.findOne(count).count;\r\nreturn result;",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:25",
+  "update_time" : "2021-01-04 20:01:25",
+  "groupName" : "TOPIC管理"
+}
+
+{
+  "_id" : ObjectId("5fe1f877602e873b443e79a7"),
+  "method" : "GET",
+  "path" : "/consumer/table-list",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "表空间列表",
+  "datasource" : "mongodb",
+  "script" : "\r\nsql = \"\"\"\r\n{\r\n    \"find\":\"consumer\",\r\n    \"projection\":{\"_id\":1,\"table\":1},\r\n    \"filter\":{\r\n    }\r\n}\r\n\"\"\"\r\nreturn db.find(sql);",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:25",
+  "update_time" : "2021-01-04 20:01:25",
+  "groupName" : "TOPIC管理"
+}
+
+{
+  "_id" : ObjectId("5fe34570602e876844eed723"),
+  "method" : "POST",
+  "path" : "/table/{table}/delete",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "表空间数据删除",
+  "datasource" : "mongodb",
+  "script" : "//log.info(bodyRoot)\r\n//{pageNo=1, pageSize=10, startTime=, endTime=, times=, isSync=, customSearch={}}\r\nimport java.text.SimpleDateFormat\r\nfilter = [:];\r\nif(bodyRoot.customSearch){\r\n    filter = Utils.pasreToObject(bodyRoot.customSearch);\r\n}\r\nif(bodyRoot.isSync){\r\n    filter.isSync = Integer.valueOf(bodyRoot.isSync);\r\n}\r\n\r\nif(bodyRoot.times){\r\n    filter.times = Integer.valueOf(bodyRoot.times);\r\n}\r\n\r\nSimpleDateFormat sdf = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");\r\ntimeFilter = null;\r\nif(bodyRoot.startTime && bodyRoot.endTime){\r\n    timeFilter = [\"\\$gte\":sdf.parse(bodyRoot.startTime),\"\\$lte\":sdf.parse(bodyRoot.endTime)]\r\n}else if(bodyRoot.startTime){\r\n    timeFilter = [\"\\$gte\":sdf.parse(bodyRoot.startTime)]\r\n}else if(bodyRoot.endTime){\r\n    timeFilter = [\"\\$lte\":sdf.parse(bodyRoot.endTime)]\r\n}\r\n\r\nif(timeFilter){\r\n    filter.createTime = timeFilter;\r\n}\r\n\r\ndoc = [\r\n    \"delete\":table,\r\n    \"deletes\":[\r\n        [\r\n            \"q\":filter,\r\n            \"limit\":0\r\n        ]\r\n    ]\r\n    \r\n    \r\n]\r\n\r\nreturn mongodb.remove(doc);",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:25",
+  "update_time" : "2021-01-04 20:01:25",
+  "groupName" : "TOPIC管理"
+}
+
+{
+  "_id" : ObjectId("5fe340c6602e876844eed71c"),
+  "method" : "PUT",
+  "path" : "/table/{table}",
+  "type" : "Ql",
+  "service" : "rocket-ssc",
+  "group_name" : "TOPIC管理",
+  "editor" : "mihuajun",
+  "name" : "表空间数据重置",
+  "datasource" : "mongodb",
+  "script" : "//log.info(bodyRoot)\r\n//{pageNo=1, pageSize=10, startTime=, endTime=, times=, isSync=, customSearch={}}\r\nimport java.text.SimpleDateFormat\r\nfilter = [:];\r\nif(bodyRoot.customSearch){\r\n    filter = Utils.pasreToObject(bodyRoot.customSearch);\r\n}\r\nif(bodyRoot.isSync){\r\n    filter.isSync = Integer.valueOf(bodyRoot.isSync);\r\n}\r\n\r\nif(bodyRoot.times){\r\n    filter.times = Integer.valueOf(bodyRoot.times);\r\n}\r\n\r\nSimpleDateFormat sdf = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");\r\ntimeFilter = null;\r\nif(bodyRoot.startTime && bodyRoot.endTime){\r\n    timeFilter = [\"\\$gte\":sdf.parse(bodyRoot.startTime),\"\\$lte\":sdf.parse(bodyRoot.endTime)]\r\n}else if(bodyRoot.startTime){\r\n    timeFilter = [\"\\$gte\":sdf.parse(bodyRoot.startTime)]\r\n}else if(bodyRoot.endTime){\r\n    timeFilter = [\"\\$lte\":sdf.parse(bodyRoot.endTime)]\r\n}\r\n\r\nif(timeFilter){\r\n    filter.createTime = timeFilter;\r\n}\r\n\r\ndoc = [\r\n    \"update\":table,\r\n    \"updates\":[\r\n        [\r\n            \"q\":filter,\r\n            \"u\":[\r\n                \"\\$set\":[\"isSync\":0,\"times\":0,\"nextTime\":new Date()]\r\n            ],\r\n            \"multi\":true\r\n        ]\r\n    ]\r\n    \r\n    \r\n]\r\n\r\nreturn mongodb.update(doc);",
+  "options" : "{}",
+  "create_time" : "2021-01-04 20:01:25",
+  "update_time" : "2021-01-04 20:01:25",
+  "groupName" : "TOPIC管理"
+}
