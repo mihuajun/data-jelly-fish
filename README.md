@@ -52,3 +52,9 @@ DJ 启动生产者任务线 程T1调用A系统的http接口，将数据存储在
 #### 样例图
 ![输入图片说明](https://images.gitee.com/uploads/images/2021/0127/221506_57af30a6_5139840.png "屏幕截图.png")
 ![输入图片说明](https://images.gitee.com/uploads/images/2021/0127/221540_35b289eb_5139840.png "屏幕截图.png")
+
+### 问题反馈 
+微信号: freedom-Union  
+邮件交流： kobe96688@126.com   
+报告issue: https://gitee.com/alenfive/data-jelly-fish/issues 
+![输入图片说明](https://images.gitee.com/uploads/images/2020/0915/183440_93549b7f_5139840.png "屏幕截图.png")
