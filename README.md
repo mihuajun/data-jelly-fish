@@ -14,8 +14,8 @@
 [https://xie.infoq.cn/article/f813f9373d094965bb32ed2d4](https://xie.infoq.cn/article/f813f9373d094965bb32ed2d4)
 
 
-#### 文档地址
-[https://alenfive.gitbook.io/data-jellyfish/ye-wu-dui-jie](https://alenfive.gitbook.io/data-jellyfish/ye-wu-dui-jie)
+#### 文档地址(安装部署指南)
+[https://alenfive.gitbook.io/data-jellyfish/bu-shu-zhi-nan](https://alenfive.gitbook.io/data-jellyfish/bu-shu-zhi-nan)
 
 
 #### 用途
