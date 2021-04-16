@@ -24,15 +24,6 @@ public class ApiController {
     @Autowired
     private DataJellyFishService dataJellyFishService;
 
-    @Autowired
-    private TopicService topicService;
-
-    @Autowired
-    private ProducerService producerService;
-
-    @Autowired
-    private ConsumerService consumerService;
-
     /**
      * 任务加载
      */
