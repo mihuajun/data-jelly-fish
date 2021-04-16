@@ -13,6 +13,11 @@
 #### 与三方系统打通的N种进阶方式
 [https://xie.infoq.cn/article/f813f9373d094965bb32ed2d4](https://xie.infoq.cn/article/f813f9373d094965bb32ed2d4)
 
+
+#### 文档地址
+[https://alenfive.gitbook.io/data-jellyfish/ye-wu-dui-jie](https://alenfive.gitbook.io/data-jellyfish/ye-wu-dui-jie)
+
+
 #### 用途
 
 1. 与第三方的数据同步    
