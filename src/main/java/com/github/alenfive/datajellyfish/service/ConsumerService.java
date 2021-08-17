@@ -194,7 +194,10 @@ public class ConsumerService {
                     long step = 10000L;
                     long maxTimes = (60*1000)/step;
                     while (true){
-                        Long lockValue = System.currentTimeMillis();
+
+                        //互斥 kill -9 || redis 阻塞时
+                        Long lockValue = System.currentTimeMillis() + 60*1000;
+
                         boolean isLock = redisService.lock(consumerLockKey,lockValue.toString());
                         if (isLock) {
                             try {
