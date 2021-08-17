@@ -13,6 +13,11 @@
 #### 与三方系统打通的N种进阶方式
 [https://xie.infoq.cn/article/f813f9373d094965bb32ed2d4](https://xie.infoq.cn/article/f813f9373d094965bb32ed2d4)
 
+
+#### 文档地址(安装部署指南)
+[https://alenfive.gitbook.io/data-jellyfish/bu-shu-zhi-nan](https://alenfive.gitbook.io/data-jellyfish/bu-shu-zhi-nan)
+
+
 #### 用途
 
 1. 与第三方的数据同步    
@@ -56,5 +61,9 @@ DJ 启动生产者任务线 程T1调用A系统的http接口，将数据存储在
 ### 问题反馈 
 微信号: freedom-Union  
 邮件交流： kobe96688@126.com   
-报告issue: https://gitee.com/alenfive/data-jelly-fish/issues 
+报告issue: https://gitee.com/alenfive/data-jelly-fish/issues
+
+
+![Image description](https://images.gitee.com/uploads/images/2021/0728/095940_334eff9b_5139840.png "Data Jelly Fish 交流群群二维码.png")
+
 ![输入图片说明](https://images.gitee.com/uploads/images/2020/0915/183440_93549b7f_5139840.png "屏幕截图.png")
