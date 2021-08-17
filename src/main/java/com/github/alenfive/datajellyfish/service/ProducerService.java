@@ -231,7 +231,7 @@ public class ProducerService {
         Map<String,Object> result = new HashMap<>();
         for (String field : fields){
             Object value = content.get(field.trim());
-            if (StringUtils.isEmpty(value)){
+            if (!"*".equals(uniqueFields) && StringUtils.isEmpty(value)){
                 throw new IllegalArgumentException("unique field `"+field+"` value is empty");
             }
             result.put(field,value);
