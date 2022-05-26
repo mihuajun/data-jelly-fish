@@ -19,6 +19,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.stream.Collectors;
@@ -84,9 +85,10 @@ public class ProducerService {
         String topicId = producerKey.split("_")[0];
         String shardingTopicKey = producerKey.split("_")[1];
         Topic topic = topicService.findOne(topicId);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
         //清理无效任务
-        if (topic == null){
+        if (topic == null || topic.getStatus() == 0){
             redisTemplate.opsForZSet().remove(producerPendingKey,producerKey);
             return;
         }
@@ -121,7 +123,7 @@ public class ProducerService {
 
             params.put("producerKey",producerKey);
             params.put("offset",shardingTopic.getOffset());
-            params.put("id",shardingTopic.getUId());
+            params.put("id",shardingTopic.getuId());
             if (!StringUtils.isEmpty(shardingTopic.getFilter())){
                 params.putAll(objectMapper.readValue(shardingTopic.getFilter(),Map.class));
             }
@@ -142,6 +144,7 @@ public class ProducerService {
             List<TopicRecord> topicRecordList = sscData.stream().map(item-> TopicRecord.builder()
                     .id(ObjectId.get())
                     .uId(null)
+                    .dt(Integer.valueOf(sdf.format(new Date())))
                     .createTime(new Date())
                     .updateTime(new Date())
                     .isSync(0)
@@ -176,10 +179,10 @@ public class ProducerService {
             if (StringUtils.isEmpty(newOffset)){
                 throw new IllegalArgumentException("offset field `"+topic.getOffsetFields().getOffset()+"` value is empty");
             }
-            Object newUId = lastTopicRecord.getContent().get(topic.getOffsetFields().getUId());
+            Object newUId = lastTopicRecord.getContent().get(topic.getOffsetFields().getuId());
 
             if (StringUtils.isEmpty(newUId)){
-                throw new IllegalArgumentException("uId field `"+topic.getOffsetFields().getUId()+"` value is empty");
+                throw new IllegalArgumentException("uId field `"+topic.getOffsetFields().getuId()+"` value is empty");
             }
 
             //偏移量更新

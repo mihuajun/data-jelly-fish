@@ -49,9 +49,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.alenfive</groupId>
-            <artifactId>rocket-api-boot-starter</artifactId>
-            <version>2.3.6.RELEASE</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
     </dependencies>
 

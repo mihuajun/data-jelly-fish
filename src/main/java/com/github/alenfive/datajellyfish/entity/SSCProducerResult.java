@@ -16,6 +16,6 @@ import java.util.Map;
  * @menu
  */
 @Data
-public class SSCProducerResult extends SSCResult{
+public class SSCProducerResult extends SSCResult {
     private List<Map<String,Object>> data;
 }

@@ -6,15 +6,9 @@
     <link rel="stylesheet" href="../data-jelly-fish/css/layui.css">
     <link rel="stylesheet" href="https://www.layui.com/admin/pro/dist/style/admin.css?v=1.4.0%20pro-1">
 </head>
-<body >
+<body>
 <div id="LAY_app" class="layadmin-tabspage-none">
     <div class="layadmin-tabsbody-item layui-show">
-        <div class="layui-card layadmin-header">
-            <div class="layui-breadcrumb" lay-filter="breadcrumb" style="visibility: visible;">
-                <a lay-href="">主页</a>
-            </div>
-        </div>
-
         <div class="layui-fluid">
             <div class="layui-row layui-col-space15">
                 <div class="layui-col-sm6 layui-col-md3">
@@ -112,7 +106,7 @@
     });
 
     function init(){
-        $.getJSON("../stats",function (data){
+        $.getJSON("../count/stats",function (data){
             if (data.code != "0"){
                 return;
             }

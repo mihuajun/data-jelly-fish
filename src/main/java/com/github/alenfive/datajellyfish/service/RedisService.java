@@ -6,6 +6,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @Description:
  * @Copyright: Copyright (c) 2019  ALL RIGHTS RESERVED.
@@ -22,6 +24,19 @@ public class RedisService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    private final String pushStatusKey = "rocket-ssc:push-status:";
+
+    public void setErrMsg(String table, String msg){
+        String key = pushStatusKey+table;
+        stringRedisTemplate.opsForValue().set(key,msg,1, TimeUnit.DAYS);
+    }
+
+    public String getErrMsg(String table){
+        String key = pushStatusKey+table;
+        return stringRedisTemplate.opsForValue().get(key);
+    }
+
     /***
      * 加锁-牛逼的设计
      * @param key

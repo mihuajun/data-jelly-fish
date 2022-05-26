@@ -46,6 +46,7 @@
                 </li>
                 <li class="layui-nav-item layui-nav-itemed">
                     <a href="javascript:;">数据空间</a>
+                    <input type="text" name="table" onkeyup="filterTableName(this)" lay-verify="title" style="color:rgba(255,255,255,.7);background-color: #23262E;border: 0px; padding-left: 20px;" autocomplete="off" placeholder="输入过滤条件" class="layui-input">
                     <dl class="layui-nav-child" id="table-list">
                     </dl>
                 </li>
@@ -55,7 +56,7 @@
 
     <div class="layui-body">
         <!-- 内容主体区域 -->
-        <iframe id="iframeMain" src="../view/index" style="width: 100%;border:0px;height: calc(100% - 10px)" ></iframe>
+        <iframe id="iframeMain" src="" style="width: 100%;border:0px;height: calc(100% - 10px)" ></iframe>
     </div>
 
     <div class="layui-footer">
@@ -67,46 +68,91 @@
 <script>
     //JavaScript代码区域
 
-    var $;
+    let tableList = null;
+
+    var $ ;
+    var element;
     layui.use('element', function(){
+        $ = layui.jquery
 
-        $ = layui.jquery;
-        var element = layui.element
-
-
-        $.getJSON("../consumer/table-list",function (data) {
-            if (!data.data){
-                $("#table-list").append('<dd><a href="javascript:;" >暂无</a></dd>');
-                initEvent();
-                return;
-            }
-            $.each(data.data,function (index,item) {
-                $("#table-list").append('<dd><a href="javascript:;" page="../view/tableInfo?table='+item.table+'">'+item.table+'</a></dd>')
-            })
-
-            element.render('nav', "test");
+        element = layui.element
 
 
-            initEvent();
+
+        $.getJSON("../table/table-list",function (data) {
+
+            tableList = data.data;
+
+            buildTableList(tableList);
+
+            //默认显示页面
+            initBody();
         })
+
+
+
 
 
     });
 
+    function buildTableList(list){
+        $("#table-list").html('');
+        if (!list){
+            $("#table-list").append('<dd><a href="javascript:;" >暂无</a></dd>');
+            initEvent();
+            return;
+        }
+        $.each(list,function (index,item) {
+            $("#table-list").append('<dd><a href="javascript:;" page="../view/tableInfo?table='+item.table+'">'+item.table+'</a></dd>')
+        })
+
+        element.render('nav', "test");
+
+        initEvent();
+    }
+
     function initEvent() {
+
         $(".layui-nav-item").click(function (e) {
             if ($(this).children(".layui-nav-child").length >0){
                 $($(this).children(".layui-nav-child").children("dd")[0]).click();
             }else{
-                $("#iframeMain").attr("src",$(this).children("a").attr("page"));
+                let page = $(this).children("a").attr("page");
+                window.location.hash = page;
+                $("#iframeMain").attr("src",page);
             }
         })
         $("dd>a").click(function (e) {
-            $("#iframeMain").attr("src",$(this).attr("page"));
+            let page = $(this).attr("page");
+            window.location.hash = page;
+            $("#iframeMain").attr("src",page);
             return false;
         });
     }
 
+    function initBody(){
+        var point = window.location.hash;
+        var page = "../view/index";
+        if (point != ''){
+            page = point.substr(1);
+        }
+        $("dd").removeClass("layui-this")
+        $("dd>a[page='"+page+"']").parent().addClass("layui-this");
+        $("#iframeMain").attr("src",page);
+    }
+
+    function filterTableName(target){
+        let keyword = $(target).val().toLowerCase();
+        let filterRes = [];
+        for (index in tableList){
+            item = tableList[index];
+            if (item.table.toLowerCase().indexOf(keyword) !=-1
+            || item.name.toLowerCase().indexOf(keyword) !=-1){
+                filterRes.push(item);
+            }
+        }
+        buildTableList(filterRes);
+    }
 </script>
 
 <style type="text/css">

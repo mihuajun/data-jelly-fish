@@ -76,7 +76,15 @@
                         <label class="layui-form-label">重试延迟(秒)</label>
                         <div class="layui-input-block">
                             <input type="text" name="delay" lay-verify="title" autocomplete="off" value="300" placeholder="请输入重试延迟" class="layui-input">
-                            <label >推送失败后重试的间隔</label>
+                            <label >推送失败后重试的时间间隔</label>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">缓存天数</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="cacheDay" lay-verify="title" value="-1" autocomplete="off" placeholder="请输入缓存天数" class="layui-input">
+                            <label>缓存有效期，默认值-1表示永不过期</label>
                         </div>
                     </div>
 
@@ -95,6 +103,8 @@
                             <p >是否启用指数级别重试策略，启用后，下一次的重试间隔 = 1<<重试次数 * 重试延迟</p>
                         </div>
                     </div>
+
+
 
                     <div class="layui-form-item">
                         <label class="layui-form-label">启用</label>

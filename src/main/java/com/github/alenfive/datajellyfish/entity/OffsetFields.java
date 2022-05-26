@@ -1,6 +1,6 @@
 package com.github.alenfive.datajellyfish.entity;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @Description:
@@ -12,7 +12,7 @@ import lombok.Data;
  * @Version: 1.0
  * @menu 偏移量涉及字段
  */
-@Data
+
 public class OffsetFields {
     /**
      * 偏移量字段，值为源数据进行增量查询的对应字段
@@ -21,5 +21,22 @@ public class OffsetFields {
     /**
      * 值为源数据主键唯一字段
      */
+    @JsonProperty("uId")
     private String uId;
+
+    public String getOffset() {
+        return offset;
+    }
+
+    public void setOffset(String offset) {
+        this.offset = offset;
+    }
+
+    public void setuId(String uId) {
+        this.uId = uId;
+    }
+
+    public String getuId() {
+        return uId;
+    }
 }

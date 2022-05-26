@@ -73,7 +73,15 @@
                 <input type="text" name="customSearch" lay-verify="title" autocomplete="off" value="{}" placeholder="自定义筛选 mongo语法" class="layui-input">
             </div>
         </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">全文检索</label>
+            <div class="layui-input-block">
+                <input type="text" name="textSearch" lay-verify="title" autocomplete="off" value="" placeholder="全文检索" class="layui-input">
+            </div>
+        </div>
         <div class="layui-form-item" style="text-align: right">
+            <div id="err-status" style="float: left;line-height: 40px;border-radius: 20px;background-color:#00e300;width: 15px;height: 15px;margin: 12px 8px 0px 0px;"></div>
+            <div id="err-msg" style="float: left;line-height: 40px;">正常</div>
             <button type="button" class="layui-btn layui-btn-normal" onclick="batchRePush()">批量重置</button>
             <button type="button" class="layui-btn layui-btn-normal" onclick="batchDelete()">批量删除</button>
             <button type="button" class="layui-btn layui-btn-normal" onclick="searchForm()">搜索</button>
@@ -103,7 +111,8 @@
     }
 
     var baseCols = [
-        {field:'id',  title: 'ID (_id)'}
+        {field:'shardingKey', width:100, title: '调度者 (shardingKey)',hide:true}
+        ,{field:'_id',  title: 'ID (_id)'}
         ,{field:'content',  title: '内容 (content)'}
         ,{field:'times',  title: '重试的次数 (times)'}
         ,{field:'nextTime',  title: '下一次重试的时间 (nextTime)'}
@@ -131,7 +140,7 @@
         });
 
         $("#tableName").text(tableName);
-        $.getJSON("../table/"+tableName+"/stats",function (data) {
+        $.getJSON("../count/"+tableName+"/stats",function (data) {
             if (!data.data){
                 return;
             }
@@ -144,6 +153,29 @@
 
         })
 
+        $.getJSON("../table/"+tableName+"/status",function (data) {
+
+            if (!data.data){
+                return;
+            }
+            let status = data.data.status;
+            if (status && status == "正常"){
+
+                $("#err-status").css("background-color","#00e300")
+                $("#err-status").css("color","")
+            }else if (status && status == "禁用"){
+                $("#err-status").css("background-color","gray")
+                $("#err-status").css("color","")
+            }else{
+                $("#err-status").css("background-color","red")
+                $("#err-status").css("color","red")
+            }
+            $("#err-msg").text(status);
+
+        })
+
+
+
         table = layui.table;
 
 
@@ -155,6 +187,7 @@
             }
             baseCols.push({"field":field,  title: field,hide:true})
         }
+
 
 
 
@@ -186,6 +219,9 @@
         }
 
         function initTableInfo() {
+
+
+
             table.render({
                 elem: '#test'
                 ,toolbar: true
@@ -221,6 +257,14 @@
                         })
 
                     }
+
+                    $.getJSON("../consumer/table/"+tableName,function (data) {
+                        if (!data.data){
+                            return;
+                        }
+                        $(".layui-table-tool-temp").html("<div style='float: left'> [ POST ] </div><div style='float: left;margin-left:10px;'>"+ data.data.url +"</div>");
+
+                    })
 
                     return {
                         "code":res.code,

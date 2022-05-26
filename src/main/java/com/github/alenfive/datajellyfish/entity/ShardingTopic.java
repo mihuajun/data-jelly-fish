@@ -1,6 +1,6 @@
 package com.github.alenfive.datajellyfish.entity;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @Description:
@@ -12,7 +12,6 @@ import lombok.Data;
  * @Version: 1.0
  * @menu
  */
-@Data
 public class ShardingTopic {
     /**
      * 分片任务唯一标识，在该topic下唯一
@@ -25,10 +24,43 @@ public class ShardingTopic {
     /**
      * 源数据唯一键
      */
+    @JsonProperty("uId")
     private String uId;
 
     /**
      * 自定义过滤条件，会加入到body请求中
      */
     private String filter;
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getOffset() {
+        return offset;
+    }
+
+    public void setOffset(String offset) {
+        this.offset = offset;
+    }
+
+    public String getuId() {
+        return uId;
+    }
+
+    public void setuId(String uId) {
+        this.uId = uId;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
 }

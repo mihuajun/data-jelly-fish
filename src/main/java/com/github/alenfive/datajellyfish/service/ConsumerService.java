@@ -97,7 +97,7 @@ public class ConsumerService {
 
         Consumer consumer = this.getById(consumerId);
         //清理无效任务
-        if (consumer == null){
+        if (consumer == null || consumer.getStatus() == 0){
             redisTemplate.opsForZSet().remove(consumerPendingKey,consumerKey);
             return;
         }
@@ -114,7 +114,7 @@ public class ConsumerService {
         //构建分片数据过滤条件
         Criteria criteria = Criteria.where("nextTime").lte(new Date()).and("isSync").is(0).and("times").lt(consumer.getMaxTimes());
         Document document = criteria.getCriteriaObject();
-        buildShardingConsumerFilter(document,shardingConsumer.getFilter());
+        buildContentFilter(document,shardingConsumer.getFilter());
         Query query = new BasicQuery(document).limit(100);
 
         List<TopicRecord> topicRecordList = mongoTemplate.find(query,TopicRecord.class,consumer.getTable());
@@ -128,23 +128,30 @@ public class ConsumerService {
         String resultStr = null;
         SSCResult result = null;
         Map<String,Object> params = null;
+        String id = null;
 
         for (TopicRecord topicRecord : topicRecordList){
 
             try {
                 params = topicRecord.getContent();
-
+                id = topicRecord.getId().toHexString();
                 String url = consumer.getUrl();
                 if (StringUtils.isEmpty(url)){
                     throw new IllegalArgumentException("URL参数为空");
                 }
+                log.info("request url:{},params:{}",url,params);
                 resultStr = restTemplate.postForObject(url,params,String.class);
                 result = objectMapper.readValue(resultStr, SSCResult.class);
                 topicRecord.setLastResult(objectMapper.readValue(resultStr, Map.class));
+                //清理异常信息
+                redisService.setErrMsg(consumer.getTable(),"正常");
             }catch (RestClientException e){
                 //发生异常，暂定1分钟处理
                 redisTemplate.opsForZSet().add(consumerPendingKey,consumerKey,System.currentTimeMillis()+60*1000);
                 log.error("consumerKey:{},request url:{} params:{},result:{}",consumerKey,consumer.getUrl(),params,resultStr);
+
+                //暂存异常信息
+                redisService.setErrMsg(consumer.getTable(),e.getMessage() +" 关注数据： {\"_id\":{\"$oid\":\""+id+"\"}}");
 
                 //推送告警
                 warningService.dingTalkText(consumer.getWarningUrl(),"producerKey:"+consumerKey,consumer.getUrl(),params,resultStr,e.getMessage());
@@ -158,7 +165,7 @@ public class ConsumerService {
             if (result != null && "0".equals(result.getCode())){
                 topicRecord.setIsSync(1);
             }
-
+            topicRecord.setShardingKey(shardingConsumerKey);
             topicRecord.setTimes(topicRecord.getTimes() + 1);
             topicRecord.setUpdateTime(new Date());
             topicRecord.setNextTime(buildNextTime(consumer,topicRecord));
@@ -170,7 +177,12 @@ public class ConsumerService {
 
     }
 
-    private void buildShardingConsumerFilter(Document document, String filter) {
+    /**
+     * 构建mongodb查询数据集中content的内容
+     * @param document
+     * @param filter
+     */
+    public void buildContentFilter(Document document, String filter) {
         Document shardingConsumerFilter = Document.parse(filter);
         for(String key :shardingConsumerFilter.keySet()){
             document.put("content."+key,shardingConsumerFilter.get(key));
@@ -197,7 +209,6 @@ public class ConsumerService {
 
                         //互斥 kill -9 || redis 阻塞时
                         Long lockValue = System.currentTimeMillis() + 60*1000;
-
                         boolean isLock = redisService.lock(consumerLockKey,lockValue.toString());
                         if (isLock) {
                             try {
@@ -236,7 +247,7 @@ public class ConsumerService {
         }
     }
 
-    private Date buildNextTime(Consumer consumer,TopicRecord topicRecord) {
+    private Date buildNextTime(Consumer consumer, TopicRecord topicRecord) {
         Calendar calendar = Calendar.getInstance();
         if (consumer.getIsExponent() == 0){
             calendar.add(Calendar.SECOND,consumer.getDelay());

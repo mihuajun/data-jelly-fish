@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Document
 public class Consumer {
 
     private ObjectId id;
@@ -82,6 +84,11 @@ public class Consumer {
      * 延迟周期是否以指数形式增长,0:否，1：是
      */
     private Integer isExponent;
+
+    /**
+     * 缓存天数
+     */
+    private Long cacheDay;
 
     /**
      * 状态：0:禁用，1：启用

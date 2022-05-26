@@ -19,13 +19,15 @@
                             <option value="">直接选择或搜索选择</option>
                         </select>
                     </div>
+
+                    <div class="layui-input-inline" style="float: right">
+                        <button type="button" data-method="setTop" class="layui-btn " >添加</button>
+                        <button type="button" class="layui-btn layui-btn-normal" onclick="searchForm()">搜索</button>
+                    </div>
                 </div>
             </form>
         </div>
-        <div class="layui-form-item" style="text-align: right">
-            <button type="button" data-method="setTop" class="layui-btn " >添加</button>
-            <button type="button" class="layui-btn layui-btn-normal" onclick="searchForm()">搜索</button>
-        </div>
+
     </div>
 </div>
     <table class="layui-hide" id="test" lay-filter="test"></table>
@@ -64,10 +66,10 @@
                 ,{field:'name',  title: '描述'}
                 ,{field:'table',  title: '表空间'}
                 ,{field:'url',  title: '推送地址'}
-                ,{field:'delay',  title: '重试延迟(秒)'}
-                ,{field:'maxTimes',  title: '最大重试次数'}
-                ,{field:'isFirstDelay',  title: '首次延迟'}
-                ,{field:'isExponent',  title: '指数级重试'}
+                /*,{field:'delay',  title: '重试延迟(秒)'}*/
+                /*,{field:'maxTimes',  title: '最大重试次数'}*/
+                /*,{field:'isFirstDelay',  title: '首次延迟'}*/
+                /*,{field:'isExponent',  title: '指数级重试'}*/
                 ,{field:'createTime', width:200, title: '创建时间'}
                 ,{field:'status', align:'center',width:80, title: '状态',templet:'#topStatus'}
                 ,{fixed: 'right', width:200, align:'center', toolbar: '#barDemo',  title: '操作'}

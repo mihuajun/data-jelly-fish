@@ -1,6 +1,6 @@
 package com.github.alenfive.datajellyfish.controller;
 
-import com.github.alenfive.datajellyfish.service.DataJellyFishService;
+import com.github.alenfive.datajellyfish.service.SSCService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,18 +17,19 @@ import org.springframework.web.bind.annotation.RestController;
  * @menu
  */
 @RestController
-@RequestMapping("/api")
-public class ApiController {
+@RequestMapping("/task")
+public class TaskController {
 
     @Autowired
-    private DataJellyFishService dataJellyFishService;
+    private SSCService sscService;
 
     /**
      * 任务加载
      */
-    @GetMapping("/task-reload")
-    public void taskReload() {
-        dataJellyFishService.taskReload();
+    @GetMapping("/reload")
+    public void reload() {
+        sscService.taskReload();
     }
+
 
 }
