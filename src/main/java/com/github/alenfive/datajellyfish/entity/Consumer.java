@@ -98,12 +98,10 @@ public class Consumer {
     private Date createTime;
     private Date updateTime;
 
-    @JsonIgnore
     public ObjectId getId(){
         return id;
     }
 
-    @JsonProperty("id")
     public String getStrId(){
         return id == null?null:id.toHexString();
     }

@@ -15,12 +15,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @Version: 1.0
  * @menu
  */
-@RequestMapping("/view")
+@RequestMapping("")
 @Controller
 public class ViewAdminController {
 
-    @GetMapping("/{page}")
+    @GetMapping("/view/{page}")
     public String viewAdminIndex(@PathVariable String page){
         return "data-jelly-fish/"+page;
+    }
+
+    @GetMapping("/")
+    public String viewAdminIndex(){
+        return "redirect:/view/admin";
     }
 }
