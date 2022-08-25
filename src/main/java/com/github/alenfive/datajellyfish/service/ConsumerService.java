@@ -185,6 +185,10 @@ public class ConsumerService {
     public void buildContentFilter(Document document, String filter) {
         Document shardingConsumerFilter = Document.parse(filter);
         for(String key :shardingConsumerFilter.keySet()){
+            if(key.equals("_id")){
+                document.put(key,shardingConsumerFilter.get(key));
+                continue;
+            }
             document.put("content."+key,shardingConsumerFilter.get(key));
         }
     }
