@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -37,15 +34,18 @@ public class TestController {
         List<Map<String,Object>> data = new ArrayList<>();
         Map<String,Object> item1 = new HashMap<>();
         item1.put("id",1);
-        item1.put("name","张3");
+        item1.put("name","张1");
+        item1.put("time",new Date());
 
         Map<String,Object> item2 = new HashMap<>();
         item2.put("id",2);
         item2.put("name","张2");
+        item2.put("time",new Date());
 
         Map<String,Object> item3 = new HashMap<>();
         item3.put("id",3);
         item3.put("name","张3");
+        item3.put("time",new Date());
 
         data.add(item1);data.add(item2);data.add(item3);
 
