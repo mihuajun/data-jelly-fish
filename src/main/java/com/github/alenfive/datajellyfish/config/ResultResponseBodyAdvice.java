@@ -2,6 +2,7 @@ package com.github.alenfive.datajellyfish.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.alenfive.datajellyfish.entity.IgnoreWrapper;
 import com.github.alenfive.datajellyfish.entity.Result;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -38,6 +39,11 @@ public class ResultResponseBodyAdvice implements ResponseBodyAdvice {
                                   Class selectedConverterType,
                                   ServerHttpRequest request,
                                   ServerHttpResponse response) {
+
+        IgnoreWrapper ignoreWrapper = returnType.getMethodAnnotation(IgnoreWrapper.class);
+        if (ignoreWrapper != null){
+            return body;
+        }
 
         Result result = new Result();
         result.setCode("0");
