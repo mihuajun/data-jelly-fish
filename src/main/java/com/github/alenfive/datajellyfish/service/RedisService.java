@@ -38,7 +38,6 @@ public class RedisService {
     }
 
     /***
-     * 加锁-牛逼的设计
      * @param key
      * @param value 当前时间+超时时间
      * @return 锁住返回true

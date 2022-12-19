@@ -27,7 +27,7 @@
                     <dd><a href="">安全设置</a></dd>
                 </dl>
             </li>-->
-            <li class="layui-nav-item"><a href="https://alenfive.gitbook.io/data-jellyfish/ye-wu-dui-jie" target="_blank">开发文档</a></li>
+            <li class="layui-nav-item"><a href="https://www.yuque.com/g/alenfive/data-jelly-fish/collaborator/join?token=dxgqPpZZKj24QQQo" target="_blank">开发文档</a></li>
         </ul>
     </div>
 
@@ -36,7 +36,7 @@
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree"  lay-filter="test">
 
-                <li class="layui-nav-item layui-this" ><a href="javascript:;" page="../view/index">实时面板</a></li>
+                <li class="layui-nav-item layui-this" ><a href="javascript:;" page="../view/index">概览</a></li>
                 <li class="layui-nav-item layui-nav-itemed">
                     <a href="javascript:;">配置</a>
                     <dl class="layui-nav-child">
@@ -79,7 +79,7 @@
 
 
 
-        $.getJSON("../table/table-list",function (data) {
+        $.getJSON("../api/table/table-list",function (data) {
 
             tableList = data.data;
 
@@ -113,7 +113,7 @@
 
     function initEvent() {
 
-        $(".layui-nav-item").click(function (e) {
+        $(".layui-side .layui-nav-item").click(function (e) {
             if ($(this).children(".layui-nav-child").length >0){
                 $($(this).children(".layui-nav-child").children("dd")[0]).click();
             }else{
@@ -122,7 +122,7 @@
                 $("#iframeMain").attr("src",page);
             }
         })
-        $("dd>a").click(function (e) {
+        $(".layui-side dd>a").click(function (e) {
             let page = $(this).attr("page");
             window.location.hash = page;
             $("#iframeMain").attr("src",page);

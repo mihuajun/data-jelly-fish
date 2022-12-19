@@ -1,5 +1,7 @@
 package com.github.alenfive.datajellyfish.config;
 
+import com.github.alenfive.datajellyfish.service.DataOperateService;
+import com.github.alenfive.datajellyfish.service.data.MongoDataOperateService;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,5 +27,10 @@ public class BeanConfig {
                 .setConnectTimeout(Duration.ofSeconds(30))
                 .setReadTimeout(Duration.ofSeconds(30))
                 .build();
+    }
+
+    @Bean
+    public DataOperateService getDataOperateService(){
+        return new MongoDataOperateService();
     }
 }

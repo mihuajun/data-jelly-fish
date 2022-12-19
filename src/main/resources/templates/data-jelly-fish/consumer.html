@@ -49,7 +49,7 @@
         table.render({
             elem: '#test'
             ,cellMinWidth: 80
-            ,url:'../consumer/list'
+            ,url:'../api/consumer/list'
             ,where: {topicId: getUrlParam().topicId}
             ,parseData: function (res) {
                 return {
@@ -60,10 +60,8 @@
                 }
             }
             ,cols: [
-                [
-                {field:'id',  title: 'ID'}
-                ,{field:'topicId',  title: '所属topic'}
-                ,{field:'name',  title: '描述'}
+                [{field:'name',  title: '名称'}
+                 ,{field:'topicName',  title: '所属topic'}
                 ,{field:'table',  title: '表空间'}
                 ,{field:'url',  title: '推送地址'}
                 /*,{field:'delay',  title: '重试延迟(秒)'}*/
@@ -125,7 +123,7 @@
 
     function init(){
         var topicId = getUrlParam().topicId;
-        $.get("../topic/select",function (data) {
+        $.get("../api/topic/select",function (data) {
             if(!data.data){
                 return;
             }
@@ -163,7 +161,7 @@
         }, function(index) {
             $.ajax({
                 type: 'DELETE',
-                url: '../consumer',
+                url: '../api/consumer',
                 data: {id:obj.data.id},
                 success: function(data){
                     if (data.code == "0"){

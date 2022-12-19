@@ -34,3 +34,5 @@ spring:
     user:
       password: admin
       name: admin
+server:
+  port: 8082

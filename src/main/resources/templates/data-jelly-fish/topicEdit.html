@@ -8,37 +8,27 @@
 <body  style="margin:20px;">
     <form class="layui-form" action="" lay-filter="example">
         <div class="layui-form-item">
-            <label class="layui-form-label">名称</label>
+            <label class="layui-form-label">*名称</label>
             <div class="layui-input-block">
                 <input type="text" name="name" lay-verify="title" autocomplete="off" placeholder="请输入名称" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">来源地址</label>
+            <label class="layui-form-label">*来源地址</label>
             <div class="layui-input-block">
                 <input type="text" name="url" lay-verify="title" autocomplete="off" placeholder="请输入远程地址" class="layui-input">
             </div>
         </div>
+
+
         <div class="layui-form-item">
-            <label class="layui-form-label">告警地址</label>
-            <div class="layui-input-block">
-                <input type="text" name="warningUrl" lay-verify="title" autocomplete="off" placeholder="请输入告警地址" class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">频次(秒)</label>
-            <div class="layui-input-block">
-                <input type="text" name="delay" lay-verify="title" autocomplete="off" value="" placeholder="请输入频次" class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">偏移量字段(offset)</label>
+            <label class="layui-form-label">*偏移量字段(offset)</label>
             <div class="layui-input-block">
                 <input type="text" name="offsetFields.offset" lay-verify="title" autocomplete="off" value="" placeholder="（非空字段）" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">主键字段(uId)</label>
+            <label class="layui-form-label">*主键字段(uId)</label>
             <div class="layui-input-block">
                 <input type="text" name="offsetFields.uId" lay-verify="title" autocomplete="off" value="" placeholder="（非空字段）" class="layui-input">
             </div>
@@ -47,6 +37,18 @@
             <label class="layui-form-label">启用</label>
             <div class="layui-input-block">
                 <input type="checkbox" checked=""  name="status" lay-skin="switch" lay-text="ON|OFF" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">*频次(秒)</label>
+            <div class="layui-input-block">
+                <input type="text" name="delay" lay-verify="title" autocomplete="off" value="10" placeholder="请输入频次" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">告警地址</label>
+            <div class="layui-input-block">
+                <input type="text" name="warningUrl" lay-verify="title" autocomplete="off" placeholder="请输入告警地址" class="layui-input">
             </div>
         </div>
         <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
@@ -127,7 +129,7 @@
 
         //表单赋值
         if (id){
-            $.get("../topic/"+id,function (data) {
+            $.get("../api/topic/"+id,function (data) {
                 if(!data.data){
                     return;
                 }
@@ -192,7 +194,7 @@
 
         $.ajax({
             type: "POST",
-            url: "../topic",
+            url: "../api/topic",
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(data),
             dataType: "json",

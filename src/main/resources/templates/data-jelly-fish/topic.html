@@ -26,7 +26,7 @@
         table.render({
             elem: '#test'
             ,cellMinWidth: 80
-            ,url:'../topic/list'
+            ,url:'../api/topic/list'
             ,parseData: function (res) {
                 return {
                     "code":res.code,
@@ -36,9 +36,7 @@
                 }
             }
             ,cols: [
-                [
-                {field:'id',  title: 'ID'}
-                ,{field:'name',  title: '描述'}
+                [{field:'name',  title: '名称'}
                 ,{field:'url', width:500, title: '来源地址'}
                 ,{field:'delay', align:'center',width:100, title: '频次(秒)'}
                 ,{field:'status', align:'center',width:80, title: '状态',templet:'#topStatus'}
@@ -56,7 +54,7 @@
         //触发事件
         var active = {
             taskReload: function(){
-                $.getJSON("../task/reload",function (data) {
+                $.getJSON("../api/task/reload",function (data) {
                     if (data.code == "0"){
                         layer.msg("刷新成功",{time: 500},function(){
                         });
@@ -135,7 +133,7 @@
         }, function(index) {
             $.ajax({
                 type: 'DELETE',
-                url: '../topic',
+                url: '../api/topic',
                 data: {id:obj.data.id},
                 success: function(data){
                     if (data.code == "0"){

@@ -23,9 +23,6 @@ public class DataJellyFishService {
     @Autowired
     private ConsumerService consumerService;
 
-    @Autowired
-    private TopicService topicService;
-
     /**
      * 任务初始化
      * @todo 执行中任务初始化问题

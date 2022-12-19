@@ -8,7 +8,6 @@ import com.github.alenfive.datajellyfish.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -44,7 +43,7 @@ public class ProducerService {
     private final String producerLockKey = "rocket-ssc:producer:lock";
 
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private DataOperateService dataOperateService;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -56,20 +55,15 @@ public class ProducerService {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private ConsumerService consumerService;
-
-    @Autowired
     private RedisService redisService;
 
-    @Autowired
-    private TopicService topicService;
 
     @Autowired
     private WarningService warningService;
 
     public void taskReload() {
         //入生产者任务队列
-        List<Topic> topicList = topicService.listAll();
+        List<Topic> topicList = dataOperateService.listTopicAll();
         for (Topic topic : topicList){
             if (topic.getStatus() != null && topic.getStatus() == 0){
                 continue;
@@ -84,7 +78,7 @@ public class ProducerService {
     public void execute(String producerKey){
         String topicId = producerKey.split("_")[0];
         String shardingTopicKey = producerKey.split("_")[1];
-        Topic topic = topicService.findOne(topicId);
+        Topic topic = dataOperateService.getTopic(topicId);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
         //清理无效任务
@@ -105,7 +99,7 @@ public class ProducerService {
             return;
         }
 
-        List<Consumer> consumerList = consumerService.findByTopic(topicId);
+        List<Consumer> consumerList = dataOperateService.findConsumerByTopic(topicId);
         if (consumerList.isEmpty()){
             log.warn("topic:{},consumerList is empty",producerKey);
             redisTemplate.opsForZSet().add(producerPendingKey,producerKey,System.currentTimeMillis()+60*1000);
@@ -166,9 +160,9 @@ public class ProducerService {
 
                     item.setNextTime(nextTime);
                     item.setUId(MD5Utils.md5(buildUniqueField(item.getContent(),consumer.getUniqueFields())));
-                    boolean exists = mongoTemplate.exists(Query.query(Criteria.where("uId").is(item.getUId())),consumer.getTable());
+                    boolean exists = dataOperateService.existsTopicRecord(item.getUId(),consumer.getTable());
                     if (!exists){
-                        mongoTemplate.save(item,consumer.getTable());
+                        dataOperateService.saveTopicRecord(item,consumer.getTable());
                     }
                 }
             }
@@ -186,7 +180,7 @@ public class ProducerService {
             }
 
             //偏移量更新
-            topicService.updateOffset(topicId,shardingTopicKey,shardingTopic.getOffset(),newOffset.toString(),newUId.toString());
+            dataOperateService.updateOffset(topicId,shardingTopicKey,shardingTopic.getOffset(),newOffset.toString(),newUId.toString());
 
             redisTemplate.opsForZSet().add(producerPendingKey,producerKey,System.currentTimeMillis()+topic.getDelay()*1000);
         }catch (Throwable e){

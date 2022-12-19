@@ -44,8 +44,6 @@ public class ConsumerService {
 
     private final String consumerLockKey = "rocket-ssc:consumer:lock";
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -62,19 +60,12 @@ public class ConsumerService {
     @Autowired
     private WarningService warningService;
 
-    public List<Consumer> listAll() {
-        return mongoTemplate.findAll(Consumer.class);
-    }
+    @Autowired
+    private DataOperateService dataOperateService;
 
-    public void save(Consumer consumer) {
-        mongoTemplate.save(consumer);
-    }
-    public Consumer getById(String id){
-        return mongoTemplate.findById(new ObjectId(id),Consumer.class);
-    }
     public void taskReload() {
         //入消费者任务队列
-        List<Consumer> consumerList = this.listAll();
+        List<Consumer> consumerList = dataOperateService.listConsumerAll();
         for (Consumer consumer : consumerList){
             if (consumer.getStatus() != null && consumer.getStatus() == 0){
                 continue;
@@ -84,18 +75,13 @@ public class ConsumerService {
                 redisTemplate.opsForZSet().add(consumerPendingKey,consumerKey,System.currentTimeMillis());
             }
         }
-
-    }
-
-    public List<Consumer> findByTopic(String topicId) {
-        return mongoTemplate.find(Query.query(Criteria.where("topicId").is(new ObjectId(topicId))),Consumer.class);
     }
 
     public void execute(String consumerKey){
         String consumerId = consumerKey.split("_")[0];
         String shardingConsumerKey = consumerKey.split("_")[1];
 
-        Consumer consumer = this.getById(consumerId);
+        Consumer consumer = dataOperateService.getConsumerById(consumerId);
         //清理无效任务
         if (consumer == null || consumer.getStatus() == 0){
             redisTemplate.opsForZSet().remove(consumerPendingKey,consumerKey);
@@ -112,12 +98,7 @@ public class ConsumerService {
         }
 
         //构建分片数据过滤条件
-        Criteria criteria = Criteria.where("nextTime").lte(new Date()).and("isSync").is(0).and("times").lt(consumer.getMaxTimes());
-        Document document = criteria.getCriteriaObject();
-        buildContentFilter(document,shardingConsumer.getFilter());
-        Query query = new BasicQuery(document).limit(100);
-
-        List<TopicRecord> topicRecordList = mongoTemplate.find(query,TopicRecord.class,consumer.getTable());
+        List<TopicRecord> topicRecordList = dataOperateService.findTopicRecord(consumer,shardingConsumer);
 
 
         if (CollectionUtils.isEmpty(topicRecordList)){
@@ -151,10 +132,12 @@ public class ConsumerService {
                 log.error("consumerKey:{},request url:{} params:{},result:{}",consumerKey,consumer.getUrl(),params,resultStr);
 
                 //暂存异常信息
-                redisService.setErrMsg(consumer.getTable(),e.getMessage() +" 关注数据： {\"_id\":{\"$oid\":\""+id+"\"}}");
+                redisService.setErrMsg(consumer.getTable(),e.getMessage() +" 关注数据： {\"_id\":\""+id+"\"}");
 
                 //推送告警
                 warningService.dingTalkText(consumer.getWarningUrl(),"producerKey:"+consumerKey,consumer.getUrl(),params,resultStr,e.getMessage());
+
+                e.printStackTrace();
                 return;
             } catch (Throwable e) {
                 topicRecord.setLastResult(e.getMessage());
@@ -170,27 +153,11 @@ public class ConsumerService {
             topicRecord.setUpdateTime(new Date());
             topicRecord.setNextTime(buildNextTime(consumer,topicRecord));
 
-            mongoTemplate.save(topicRecord,consumer.getTable());
+            dataOperateService.saveTopicRecord(topicRecord,consumer.getTable());
         }
 
         redisTemplate.opsForZSet().add(consumerPendingKey,consumerKey,System.currentTimeMillis());
 
-    }
-
-    /**
-     * 构建mongodb查询数据集中content的内容
-     * @param document
-     * @param filter
-     */
-    public void buildContentFilter(Document document, String filter) {
-        Document shardingConsumerFilter = Document.parse(filter);
-        for(String key :shardingConsumerFilter.keySet()){
-            if(key.equals("_id")){
-                document.put(key,shardingConsumerFilter.get(key));
-                continue;
-            }
-            document.put("content."+key,shardingConsumerFilter.get(key));
-        }
     }
 
     public void run() {

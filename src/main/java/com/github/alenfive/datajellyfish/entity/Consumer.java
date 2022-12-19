@@ -105,4 +105,7 @@ public class Consumer {
     public String getStrId(){
         return id == null?null:id.toHexString();
     }
+
+    /*显示扩展字段*/
+    private String topicName;
 }

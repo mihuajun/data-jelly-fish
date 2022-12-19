@@ -82,6 +82,7 @@
         <div class="layui-form-item" style="text-align: right">
             <div id="err-status" style="float: left;line-height: 40px;border-radius: 20px;background-color:#00e300;width: 15px;height: 15px;margin: 12px 8px 0px 0px;"></div>
             <div id="err-msg" style="float: left;line-height: 40px;">正常</div>
+            <button type="button" class="layui-btn layui-btn-black" onclick="editConsumer()">配置</button>
             <button type="button" class="layui-btn layui-btn-normal" onclick="batchRePush()">批量重置</button>
             <button type="button" class="layui-btn layui-btn-normal" onclick="batchDelete()">批量删除</button>
             <button type="button" class="layui-btn layui-btn-normal" onclick="searchForm()">搜索</button>
@@ -98,6 +99,7 @@
     var $;
     var table;
     var form;
+    let $consumer;
 
     function getUrlParam() {
         let query = window.location.search.substring(1);
@@ -140,7 +142,7 @@
         });
 
         $("#tableName").text(tableName);
-        $.getJSON("../count/"+tableName+"/stats",function (data) {
+        $.getJSON("../api/count/"+tableName+"/stats",function (data) {
             if (!data.data){
                 return;
             }
@@ -153,7 +155,7 @@
 
         })
 
-        $.getJSON("../table/"+tableName+"/status",function (data) {
+        $.getJSON("../api/table/"+tableName+"/status",function (data) {
 
             if (!data.data){
                 return;
@@ -192,7 +194,7 @@
 
 
         //表头信息获取
-        $.getJSON("../table/"+tableName+"/cols",function (data) {
+        $.getJSON("../api/table/"+tableName+"/cols",function (data) {
             if (!data.data){
                 return;
             }
@@ -227,7 +229,7 @@
                 ,toolbar: true
                 ,defaultToolbar: ['filter', 'exports', 'print']
                 ,cellMinWidth: 80
-                ,url:'../table/'+tableName
+                ,url:'../api/table/'+tableName
                 ,method: "POST"
                 ,contentType: 'application/json'
                 ,where:form.val('example')
@@ -258,10 +260,11 @@
 
                     }
 
-                    $.getJSON("../consumer/table/"+tableName,function (data) {
+                    $.getJSON("../api/consumer/table/"+tableName,function (data) {
                         if (!data.data){
                             return;
                         }
+                        $consumer = data.data;
                         $(".layui-table-tool-temp").html("<div style='float: left'> [ POST ] </div><div style='float: left;margin-left:10px;'>"+ data.data.url +"</div>");
 
                     })
@@ -310,46 +313,20 @@
             active[method] ? active[method].call(this, othis) : '';
         });
 
-        table.on('tool(test)', function (obj) {
-            if(obj.event === "del"){
-                deleteConsumer(table,obj)
-            }else if(obj.event === "edit"){
-                editConsumer(table,obj);
-            }
-        });
     });
 
 
     /* -----------function------------ */
-    function deleteConsumer(table,obj) {
-        layer.confirm('确认要删除吗？', {
-            btn : [ '确定', '取消' ]//按钮
-        }, function(index) {
-            $.ajax({
-                type: 'DELETE',
-                url: '../consumer',
-                data: {id:obj.data.id},
-                success: function(data){
-                    if (data.code == "0"){
-                        layer.msg("删除成功",{time: 500},function(){
-                            table.reload('test');
-                        });
-                    }
-                }
-            });
 
-            layer.close(index);
-        });
-    }
 
-    function editConsumer(table,obj) {
+    function editConsumer() {
         var index = layer.open({
             type: 2 //此处以iframe举例
             ,title: 'CONSUMER-EDIT'
             ,area: ['1000px', '450px']
             ,shade: 0
             ,maxmin: true
-            ,content: '../view/consumerEdit?id='+obj.data.id
+            ,content: '../view/consumerEdit?id='+$consumer.id
             ,zIndex: layer.zIndex //重点1
             ,success: function(layero){
                 layer.setTop(layero); //重点2
@@ -374,7 +351,7 @@
         }, function(index) {
             $.ajax({
                 type: 'POST',
-                url: '../table/'+tableName+"/delete",
+                url: '../api/table/'+tableName+"/delete",
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(form.val('example')),
                 dataType: "json",
@@ -397,7 +374,7 @@
         }, function(index) {
             $.ajax({
                 type: 'PUT',
-                url: '../table/'+tableName,
+                url: '../api/table/'+tableName,
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(form.val('example')),
                 dataType: "json",
@@ -413,6 +390,7 @@
             layer.close(index);
         });
     }
+
 </script>
 
 <script type="text/html" id="topStatus">
