@@ -117,10 +117,8 @@ public class ProducerService {
 
             params.put("producerKey",producerKey);
             params.put("offset",shardingTopic.getOffset());
-            params.put("id",shardingTopic.getuId());
-            if (!StringUtils.isEmpty(shardingTopic.getFilter())){
-                params.putAll(objectMapper.readValue(shardingTopic.getFilter(),Map.class));
-            }
+            params.put("uId",shardingTopic.getuId());
+            params.put("filter",shardingTopic.getFilter());
 
             resultStr = restTemplate.postForObject(topic.getUrl(),params,String.class);
             result = objectMapper.readValue(resultStr, SSCProducerResult.class);

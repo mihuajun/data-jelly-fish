@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 数据请求实例
@@ -47,8 +48,11 @@ public class TestController {
         item3.put("name","张3");
 
         data.add(item1);data.add(item2);data.add(item3);
+
+        List<Map<String,Object>> incData = data.stream().filter(item->Integer.valueOf(item.get("id").toString())>Integer.valueOf(testRequest.getOffset())).limit(1).collect(Collectors.toList());
+
         result.setCode("0");
-        result.setData(data);
+        result.setData(incData);
         return result;
     }
 
