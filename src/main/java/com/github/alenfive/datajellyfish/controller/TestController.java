@@ -30,7 +30,7 @@ public class TestController {
      */
     @IgnoreWrapper
     @PostMapping("/producer")
-    public TestResult producer(TestRequest testRequest){
+    public TestResult producer(@RequestBody TestRequest testRequest){
         log.info("test producer params:{}",testRequest);
         TestResult result = new TestResult();
         List<Map<String,Object>> data = new ArrayList<>();
