@@ -15,7 +15,7 @@
 
 
 #### 文档地址(安装部署指南)
-[https://alenfive.gitbook.io/data-jellyfish/bu-shu-zhi-nan](https://alenfive.gitbook.io/data-jellyfish/bu-shu-zhi-nan)
+[https://www.yuque.com/alenfive/data-jelly-fish](https://www.yuque.com/alenfive/data-jelly-fish)
 
 
 #### 用途
