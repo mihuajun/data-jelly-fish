@@ -62,7 +62,7 @@
             ,cols: [
                 [{field:'name',  title: '名称'}
                  ,{field:'topicName',  title: '所属topic'}
-                ,{field:'table',  title: '表空间'}
+                ,{field:'table',  title: '表空间',templet: '#tableSpace'}
                 ,{field:'url',  title: '推送地址'}
                 /*,{field:'delay',  title: '重试延迟(秒)'}*/
                 /*,{field:'maxTimes',  title: '最大重试次数'}*/
@@ -70,7 +70,7 @@
                 /*,{field:'isExponent',  title: '指数级重试'}*/
                 ,{field:'createTime', width:200, title: '创建时间'}
                 ,{field:'status', align:'center',width:80, title: '状态',templet:'#topStatus'}
-                ,{fixed: 'right', width:200, align:'center', toolbar: '#barDemo',  title: '操作'}
+                ,{fixed: 'right', align:'center', toolbar: '#barDemo',  title: '操作'}
                 ]
             ]
             ,page: true,
@@ -193,11 +193,11 @@
         layer.full(index);
     }
 
-    function linkTableInfo(table,obj) {
+    function linkTableInfo(table) {
         if (parent.$("#iframeMain")[0]){
-            parent.$("#iframeMain").attr("src","../view/tableInfo?table="+obj.data.table)
+            parent.$("#iframeMain").attr("src","../view/tableInfo?table="+table)
         }else{
-            parent.parent.$("#iframeMain").attr("src","../view/tableInfo?table="+obj.data.table)
+            parent.parent.$("#iframeMain").attr("src","../view/tableInfo?table="+table)
         }
     }
 
@@ -212,7 +212,6 @@
 </script>
 
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="detail">数据查看</a>
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
@@ -224,5 +223,9 @@
     <span class="layui-badge ">启用</span>
     {{# } }}
 </script>
+<script type="text/html" id="tableSpace">
+    <a style="color:#7d7df9" href="javascript:linkTableInfo('{{ d.table }}')">{{d.table}}</a>
+</script>
+
 </body>
 </html>
