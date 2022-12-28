@@ -1,0 +1,26 @@
+{
+  "_id" : {
+    "$oid": "61011885e5bfdf307dfc902c"
+  },
+  "name" : "test",
+  "url" : "http://localhost:8082/test/producer",
+  "delay" : 5,
+  "offsetFields" : {
+    "offset" : "id",
+    "uId" : "id"
+  },
+  "status" : 1,
+  "shardings" : [
+    {
+      "key" : "shard1",
+      "offset" : "0",
+      "uId" : "0",
+      "filter" : "#filter"
+    }
+  ],
+  "warningUrl" : "",
+  "updateTime" : {
+    "$date": "2022-12-28T06:22:27.646Z"
+  },
+  "_class" : "com.github.alenfive.datajellyfish.entity.Topic"
+}

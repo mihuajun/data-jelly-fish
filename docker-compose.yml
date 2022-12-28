@@ -1,0 +1,25 @@
+version: "4.0"
+services:
+  web:
+    build: .
+    container_name: data-jelly-fish
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+    image: data-jelly-fish
+    ports:
+      - "8082:8082"
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    restart: always
+  mongo:
+    container_name: mongo
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - ./init-mongodb:/docker-entrypoint-initdb.d
+      - ./init-mongodb/data:/tmp/data

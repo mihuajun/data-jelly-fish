@@ -54,7 +54,7 @@
         //触发事件
         var active = {
             taskReload: function(){
-                $.getJSON("../api/task/reload",function (data) {
+                $.getJSON("../api/task-reload",function (data) {
                     if (data.code == "0"){
                         layer.msg("刷新成功",{time: 500},function(){
                         });

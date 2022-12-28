@@ -6,7 +6,8 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
   mvc:
-    date-format: yyyy-MM-dd HH:mm:ss
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
   data:
     mongodb:
       host: 127.0.0.1
@@ -18,8 +19,6 @@ spring:
   redis:
     host: 127.0.0.1
     port: 6379
-    password: root
-    database: 2
   thymeleaf:
     cache: false
     check-template: true

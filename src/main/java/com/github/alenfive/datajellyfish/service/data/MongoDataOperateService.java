@@ -73,7 +73,10 @@ public class MongoDataOperateService implements DataOperateService {
         Long count = mongoTemplate.count(query,Consumer.class);
         List<Consumer> list = mongoTemplate.find(query.skip(pager.getIndex()).limit(pager.getPageSize()),Consumer.class);
         for (Consumer consumer : list){
-            consumer.setTopicName(getTopic(consumer.getTopicId().toHexString()).getName());
+            Topic topic = getTopic(consumer.getTopicId().toHexString());
+            if (topic != null){
+                consumer.setTopicName(topic.getName());
+            }
         }
         pager.setTotalRecords(count);
         pager.setData(list);

@@ -1,0 +1,65 @@
+
+{
+  "_id" : {
+    "$oid": "610118a4e5bfdf307dfc902d"
+  },
+  "topicId" : {
+    "$oid": "61011885e5bfdf307dfc902c"
+  },
+  "table" : "test_table",
+  "name" : "测试库",
+  "url" : "http://localhost:8082/test/consumer",
+  "subscribeFilter" : "{}",
+  "warningUrl" : "",
+  "uniqueFields" : "*",
+  "shardings" : [
+    {
+      "key" : "shard1",
+      "filter" : "{}"
+    }
+  ],
+  "maxTimes" : 3,
+  "isFirstDelay" : 0,
+  "delay" : 300,
+  "isExponent" : 1,
+  "status" : 1,
+  "createTime" : {
+    "$date": "2022-12-28T06:22:27.646Z"
+  },
+  "updateTime" : {
+    "$date": "2022-12-28T06:22:27.646Z"
+  },
+  "_class" : "com.github.alenfive.datajellyfish.entity.Consumer"
+}
+{
+  "_id" : {
+    "$oid": "62a2a3972f6afa1397f17468"
+  },
+  "topicId" : {
+    "$oid": "61011885e5bfdf307dfc902c"
+  },
+  "table" : "test",
+  "name" : "test",
+  "url" : "http://localhost:8082/test/consumer-fail",
+  "subscribeFilter" : "{}",
+  "warningUrl" : "",
+  "uniqueFields" : "*",
+  "shardings" : [
+    {
+      "key" : "shard1",
+      "filter" : "{}"
+    }
+  ],
+  "maxTimes" : 3,
+  "isFirstDelay" : 0,
+  "delay" : 300,
+  "isExponent" : 1,
+  "status" : 1,
+  "createTime" : {
+    "$date": "2022-12-28T06:22:27.646Z"
+  },
+  "updateTime" : {
+    "$date": "2022-12-28T06:22:27.646Z"
+  },
+  "_class" : "com.github.alenfive.datajellyfish.entity.Consumer"
+}

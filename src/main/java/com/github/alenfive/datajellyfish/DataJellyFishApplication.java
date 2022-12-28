@@ -20,6 +20,7 @@ public class DataJellyFishApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        dataJellyFishService.taskReload();
         dataJellyFishService.run();
     }
 }
