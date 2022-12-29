@@ -10,7 +10,7 @@
     <groupId>com.github.alenfive</groupId>
     <artifactId>data-jelly-fish</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>${artifactId}</name>
+    <name>data-jelly-fish</name>
     <description>Data Jelly Fish</description>
 
     <properties>

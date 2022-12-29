@@ -3,7 +3,7 @@
     "$oid": "61011885e5bfdf307dfc902c"
   },
   "name" : "test",
-  "url" : "http://localhost:8082/test/producer",
+  "url" : "http://localhost:8080/test/producer",
   "delay" : 5,
   "offsetFields" : {
     "offset" : "id",

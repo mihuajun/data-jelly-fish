@@ -10,15 +10,16 @@ spring:
       date-time: yyyy-MM-dd HH:mm:ss
   data:
     mongodb:
-      host: 127.0.0.1
-      database: data-jelly-fish
-      username: root
-      password: root
-      port: 27017
-      authentication-database: admin
+      host: ${mongo.host:127.0.0.1}
+      database: ${mongo.database:data-jelly-fish}
+      username: ${mongo.username}
+      password: ${mongo.password}
+      port: ${mongo.port:27017}
+      authentication-database: ${mongo.authentication-database:admin}
   redis:
-    host: 127.0.0.1
-    port: 6379
+    host: ${redis.host:127.0.0.1}
+    port: ${redis.port:6379}
+    password: ${redis.password}
   thymeleaf:
     cache: false
     check-template: true
@@ -29,9 +30,5 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
 
-  security:
-    user:
-      password: admin
-      name: admin
 server:
-  port: 8082
+  port: ${port:8080}
