@@ -14,6 +14,12 @@
             </div>
         </div>
         <div class="layui-form-item">
+            <label class="layui-form-label">事件</label>
+            <div class="layui-input-block">
+                <input type="text" name="event" lay-verify="title" autocomplete="off" placeholder="请输入名称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
             <label class="layui-form-label">*来源地址</label>
             <div class="layui-input-block">
                 <input type="text" name="url" lay-verify="title" autocomplete="off" placeholder="请输入远程地址" class="layui-input">
@@ -181,6 +187,7 @@
         var data = {
             "id":id,
             "name":formData.name,
+            "event":formData.event,
             "url":formData.url,
             "warningUrl":formData.warningUrl,
             "delay":formData.delay,

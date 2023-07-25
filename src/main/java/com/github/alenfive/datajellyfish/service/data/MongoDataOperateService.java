@@ -10,6 +10,8 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.CompoundIndexDefinition;
+import org.springframework.data.mongodb.core.index.IndexInfo;
 import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -22,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class MongoDataOperateService implements DataOperateService {
 
@@ -36,13 +39,32 @@ public class MongoDataOperateService implements DataOperateService {
 
     @Override
     public void saveConsumer(Consumer consumer) {
-        consumer.setUpdateTime(new Date());
         if (consumer.getId() == null){
             consumer.setCreateTime(new Date());
             consumer.setId(ObjectId.get());
+
+            //为表建立全文检索
+            mongoTemplate.indexOps(consumer.getTable()).ensureIndex(TextIndexDefinition.builder().named("full_text_index").onAllFields().build());
+
+            //建立查询索引
+            Document indexDoc = new Document();
+            indexDoc.append("isSync",1);
+            indexDoc.append("times",1);
+            mongoTemplate.indexOps(consumer.getTable()).ensureIndex(new CompoundIndexDefinition(indexDoc).named("timer_query_index"));
         }
-        //为表建立全文检索
-        mongoTemplate.indexOps(consumer.getTable()).ensureIndex(TextIndexDefinition.builder().onAllFields().build());
+
+        //修改缓存天数:-1为永不过期
+        IndexInfo indexInfo = mongoTemplate.indexOps(consumer.getTable()).getIndexInfo().stream().filter("expire_createTime_index"::equals).findFirst().orElse(null);
+        if (indexInfo != null){
+            mongoTemplate.indexOps(consumer.getTable()).dropIndex("expire_createTime_index");
+        }
+        if (consumer.getCacheDay() != -1){
+            Document expireIndexDoc = new Document();
+            expireIndexDoc.append("createTime",1);
+            mongoTemplate.indexOps(consumer.getTable()).ensureIndex(new CompoundIndexDefinition(expireIndexDoc).named("expire_createTime_index").background().expire(consumer.getCacheDay(), TimeUnit.DAYS));
+        }
+
+        consumer.setUpdateTime(new Date());
         mongoTemplate.save(consumer);
     }
 

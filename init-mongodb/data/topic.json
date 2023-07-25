@@ -2,7 +2,8 @@
   "_id" : {
     "$oid": "61011885e5bfdf307dfc902c"
   },
-  "name" : "test",
+  "name" : "测试数据源",
+  "event" : "test",
   "url" : "http://localhost:8080/test/producer",
   "delay" : 5,
   "offsetFields" : {

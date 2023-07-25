@@ -7,7 +7,7 @@
     "$oid": "61011885e5bfdf307dfc902c"
   },
   "table" : "test_table",
-  "name" : "测试库",
+  "name" : "消费者2",
   "url" : "http://localhost:8080/test/consumer",
   "subscribeFilter" : "{}",
   "warningUrl" : "",
@@ -39,7 +39,7 @@
     "$oid": "61011885e5bfdf307dfc902c"
   },
   "table" : "test",
-  "name" : "test",
+  "name" : "消费者1",
   "url" : "http://localhost:8080/test/consumer-fail",
   "subscribeFilter" : "{}",
   "warningUrl" : "",

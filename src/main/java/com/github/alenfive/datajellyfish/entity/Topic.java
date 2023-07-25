@@ -29,6 +29,10 @@ public class Topic {
 
     private ObjectId id;
     /**
+     * 定义数据流事件名
+     */
+    private String event;
+    /**
      * 描述
      */
     private String name;
