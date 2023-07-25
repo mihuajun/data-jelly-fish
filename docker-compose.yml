@@ -5,6 +5,8 @@ services:
     container_name: redis
     image: "redis:alpine"
     restart: always
+    ports:
+      - "6379:6379"
   mongo:
     container_name: mongo
     image: mongo
@@ -15,6 +17,8 @@ services:
     volumes:
       - ./init-mongodb:/docker-entrypoint-initdb.d
       - ./init-mongodb/data:/tmp/data
+    ports:
+      - "27017:27017"
   web:
     build: .
     container_name: ${COMPOSE_PROJECT_NAME}
