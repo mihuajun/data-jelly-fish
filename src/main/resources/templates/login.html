@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="../data-jelly-fish/images/icon.jpg" type="image/x-icon" />
+    <link rel="shortcut icon" href="../data-jelly-fish/images/icon.jpg" type="image/x-icon"/>
+    <title>登录</title>
+    <link rel="stylesheet" type="text/css" href="../data-jelly-fish/css/login/zui.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../data-jelly-fish/css/login/login.css" media="all">
+    <link href="../data-jelly-fish/css/login/animate.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+    <style> body { background-image: url(../data-jelly-fish/images/login/bg.jpg);}</style>
+</head>
+
+<body>
+<div id="main-box"></div>
+<div id="main-content">
+    <div class="login-body  animated fadeInLeft">
+        <div class="login-main pr">
+            <form th:action="${callbackUrl}" method="post" class="login-form">
+                <h3> Data Jelly Fish </h3>
+                <h5 style="padding-bottom: 10px"> 数据调度中心 </h5>
+                <!-- 账号登陆 -->
+                <div id="MobileBox" class="item-box"  >
+                    <div class="input-group user-name"> <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                        <input type="text" name="username" class="form-control" placeholder="用户名">
+                    </div>
+                    <div class="input-group password"> <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                        <input type="password" name="password" class="form-control" placeholder="密码">
+                    </div>
+
+                    <!--<div class="use-qrcode-a"><a class="use-ding" href="javascript:void(0)"><img src="images/ding.png" width="17" height="17" style="margin-top:-2px"> 钉钉账号登陆</a> </div>-->
+
+                    <div class="login_btn_panel">
+                        <button class=" btn btn-primary btn-block btn-lg" data-ajax="post" type="submit" data-callback="success">登录</button>
+                        <div class="check-tips" th:if="${param.error}">鉴权失败</div>
+                    </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

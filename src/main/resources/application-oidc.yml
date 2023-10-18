@@ -1,0 +1,18 @@
+pac4j:
+  callbackUrl: http://localhost:8080/callback
+  logout:
+    defaultUrl: http://localhost:8080/view/admin
+    centralLogout: true
+  # Put all parameters under `properties`
+  # Check supported sso config parameters for different authentication clients from the below link
+  # https://github.com/pac4j/pac4j/blob/master/documentation/docs/config-module.md
+  properties:
+    usernameAttribute: preferred_username
+    nicknameAttribute: given_name
+    # Optional, change by authentication client
+    # Please replace and fill in your client config below when enabled SSO
+    oidc:
+      discoveryUri: https://id.test.com/realms/wxb/.well-known/openid-configuration
+      id: token110
+      secret: 92235bdcefc92d6a0faa79c9ecbf02c18f
+      useNonce: true

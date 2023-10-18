@@ -29,6 +29,7 @@
             </li>-->
             <li class="layui-nav-item"><a href="https://www.yuque.com/g/alenfive/data-jelly-fish/collaborator/join?token=dxgqPpZZKj24QQQo" target="_blank">开发文档</a></li>
         </ul>
+        <div class="header-profile"><a th:text="${profile.nickname}">Guest</a><a class="logout-btn" href="../logout">[退出]</a></div>
     </div>
 
     <div class="layui-side layui-bg-black" >
@@ -164,6 +165,23 @@
     margin-top: 6px;
     border-radius:25px;
 }
+
+#nav{
+    right:100px;
+}
+.header-profile{
+    line-height: 60px;
+    float:right;
+    margin-right: 20px;
+}
+.header-profile a{
+    color: #fff;
+}
+
+.logout-btn{
+    margin-left:10px;
+}
+
 </style>
 </body>
 </html>

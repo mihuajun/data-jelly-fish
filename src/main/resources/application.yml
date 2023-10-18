@@ -29,9 +29,5 @@ spring:
     mode: HTML5
     prefix: classpath:/templates/
     suffix: .html
-
-
-server:
-  port: 8080
-
-
+  profiles:
+    active: testUsernamePassword
