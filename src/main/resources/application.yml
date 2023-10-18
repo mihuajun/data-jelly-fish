@@ -30,4 +30,4 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
   profiles:
-    active: testUsernamePassword
+    include: testUsernamePassword
