@@ -93,7 +93,7 @@ public class MongoDataOperateService implements DataOperateService {
 
         Query query = Query.query(criteria);
         Long count = mongoTemplate.count(query,Consumer.class);
-        List<Consumer> list = mongoTemplate.find(query.skip(pager.getIndex()).limit(pager.getPageSize()),Consumer.class);
+        List<Consumer> list = mongoTemplate.find(query.skip(pager.getIndex()).with(Sort.by(Sort.Direction.DESC,"_id")).limit(pager.getPageSize()),Consumer.class);
         for (Consumer consumer : list){
             Topic topic = getTopic(consumer.getTopicId().toHexString());
             if (topic != null){
@@ -126,7 +126,7 @@ public class MongoDataOperateService implements DataOperateService {
         Criteria criteria = new Criteria();
         Query query = Query.query(criteria);
         Long count = mongoTemplate.count(query,Topic.class);
-        List<Topic> list = mongoTemplate.find(query.skip(pager.getIndex()).limit(pager.getPageSize()),Topic.class);
+        List<Topic> list = mongoTemplate.find(query.skip(pager.getIndex()).with(Sort.by(Sort.Direction.DESC,"_id")).limit(pager.getPageSize()),Topic.class);
         pager.setTotalRecords(count);
         pager.setData(list);
         return pager;
