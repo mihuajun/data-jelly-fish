@@ -10,8 +10,8 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOriginPatterns("*") // 允许访问的源，使用 * 可以允许所有源
-                .allowedMethods("GET", "POST", "PUT", "DELETE") // 允许的 HTTP 方法
-                .allowedHeaders("Authorization", "Content-Type") // 允许的请求头
+                .allowedMethods("*") // 允许的 HTTP 方法
+                .allowedHeaders("*") // 允许的请求头
                 .allowCredentials(true) // 是否允许发送 Cookie
                 .maxAge(3600); // 预检请求的缓存时间，单位秒
     }
