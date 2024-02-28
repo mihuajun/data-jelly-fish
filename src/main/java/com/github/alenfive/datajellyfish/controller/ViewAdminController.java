@@ -40,7 +40,7 @@ public class ViewAdminController {
 
         Map<String,Object> model = new HashMap<>();
         model.put("profile", profileService.getSessionProfile());
-        return new ModelAndView("/data-jelly-fish/"+page,model);
+        return new ModelAndView("data-jelly-fish/"+page,model);
     }
 
     @GetMapping("/{page}")
