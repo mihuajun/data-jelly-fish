@@ -13,7 +13,12 @@
 10. 基于Docker,Docker Compose 实现快速部署和使用
 11. 无中心化设计，水平自动扩容
 
+---
+#### 文档中心:
+https://www.yuque.com/alenfive/data-jelly-fish
 
+#### 加入社区:   
+![wechat_code.png](wechat_code.png)
 
 ### 一、应用场景
 1. 三方系统事件订阅和推送。内部系统之间数据订阅和推送
@@ -22,8 +27,9 @@
 ![img_7.png](img_7.png)
 
 ### 三、功能预览
+预览地址: http://39.98.181.90:8082/
+默认为匿名登录方式：用户名和密码保持相同可进入系统。
 
-默认为匿名登录：用户名和密码保持相同可进入系统。
 另外系统基于Pac4j内置OIDC,LDAP两种登录方式，需要其他登录方式自行添加Pac4j依赖
 
 ![img.png](img.png)
